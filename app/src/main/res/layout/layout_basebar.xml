@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/toolbar_content_rlyt"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/bg_toolbar"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <Button
+            android:id="@+id/toolbar_left_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_back"
+            android:gravity="center"
+            android:padding="50dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/toolbar_left_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="@dimen/left_tv_text_size"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/toolbar_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:maxEms="10"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:textSize="@dimen/title_tv_text_size"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/toolbar_right_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/toolbar_left_btn"
+            android:background="#00000000"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:visibility="invisible" />
+        <!--右边按钮-->
+        <TextView
+            android:id="@+id/toolbar_right_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="@dimen/right_tv_text_size"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#AAAAAA"
+        />
+
+
+</LinearLayout>

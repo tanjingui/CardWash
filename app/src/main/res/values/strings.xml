@@ -1,0 +1,26 @@
+<resources>
+    <string name="versionCode">1.0.0</string>
+    <string name="app_name">CarWash</string>
+    <string name="user_order_time">开单时间:  %1$s</string>
+    <string name="order_num">订单号:  %1$s </string>
+    <string name="user_wash_fee">洗车费用: %1$s 元</string>
+    <string name="user_name">姓名:  %1$s </string>
+    <string name="user_car_num">车牌号 :%1$s</string>
+    <!-- 登录的消息提示资源文件 -->
+    <string name="login_message_text1">登录账号为空，请重新输入</string>
+    <string name="login_message_text2">登录密码为空，请重新输入</string>
+    <string name="login_message_text3">请输入正确的手机号码</string>
+    <string name="login_message_text4">登录成功</string>
+    <string name="login_message_text5">账号或密码错误请重新输入</string>
+    <string name="login_message_text6">您的账号已被冻结</string>
+    <string name="login_message_text7">不支持该设备类型登录</string>
+    <string name="login_message_text8">网络异常，请稍候再试</string>
+    <string name="login_message_text9">登录验证码为空，请重新输入</string>
+
+   <!--更新的消息提示资源文件-->
+    <string name="check_new_version">正在检测版本</string>
+    <string name="there_no_new_version">当前已经是最新版本了哦</string>
+    <string name="dialog_choose_update_title">发现了新版本</string>
+    <string name="dialog_btn_confirm_download">升级</string>
+    <string name="dialog_btn_cancel_download">忽略</string>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--标题栏样式-->
+    <declare-styleable name="CustomToolBar">
+        <!--左按钮是否可见|背景-->
+        <attr name="left_btn_visible" format="boolean"/>
+        <attr name="left_btn_text" format="string"/>
+        <attr name="left_btn_src" format="reference|color"/>
+        <!--左文本是否可见|文本内容-->
+        <attr name="left_tv_visible" format="boolean"/>
+        <attr name="left_tv_text" format="string"/>
+        <!--右边按钮是否可见|背景-->
+        <attr name="right_btn_visible" format="boolean"/>
+        <attr name="right_btn_text" format="string"/>
+        <attr name="right_btn_src" format="reference|color"/>
+        <!--右文本是否可见|文本内容-->
+        <attr name="right_tv_visible" format="boolean"/>
+        <attr name="right_tv_text" format="string"/>
+        <!--标题是否可见|文本内容-->
+        <attr name="title_visible" format="boolean"/>
+        <attr name="title_text" format="string"/>
+        <!--背景-->
+        <attr name="barBackground" format="reference|color"/>
+    </declare-styleable>
+
+
+    <!--corner_color 边角颜色，
+        scanner_color 扫描线颜色
+        possible_result_color 扫描点颜色
+        frame_color 扫描框边线颜色
+        mask_color 模糊区域颜色
+        label_text  框上方提示
+    -->
+    <declare-styleable name="ViewfinderView">
+        <attr name="corner_color" format="color"/>
+        <attr name="laser_color" format="color"/>
+        <attr name="frame_color" format="color" />
+        <attr name="mask_color" format="color" />
+        <attr name="result_point_color" format="color"/>
+        <attr name="result_color" format="color" />
+        <attr name="label_text_color" format="color"/>
+        <attr name="label_text" format="string"/>
+        <attr name="label_text_size" format="float"/>
+    </declare-styleable>
+</resources>
