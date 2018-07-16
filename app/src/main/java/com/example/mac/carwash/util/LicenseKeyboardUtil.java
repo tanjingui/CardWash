@@ -41,6 +41,7 @@ public class LicenseKeyboardUtil {
         //设置键盘按键监听器
         keyboardView.setOnKeyboardActionListener(listener);
         setAllEditToNULL();
+        edits[0].setText("赣");edits[1].setText("A");currentEditText=2;  keyboardView.setKeyboard(k2);
         provinceShort = new String[]{"京", "津", "冀", "鲁", "晋", "蒙", "辽", "吉", "黑"
                 , "沪", "苏", "浙", "皖", "闽", "赣", "豫", "鄂", "湘"
                 , "粤", "桂", "渝", "川", "贵", "云", "藏", "陕", "甘"

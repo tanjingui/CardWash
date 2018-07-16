@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.order.OrderAdapter;
@@ -30,6 +31,9 @@ import com.example.mac.carwash.order.OrderBean;
 import com.example.mac.carwash.util.LicenseKeyboardUtil;
 import com.example.mac.carwash.util.ScreenSizeUtils;
 import com.example.mac.carwash.view.RecycleViewDivider;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,8 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     public static final String INPUT_LICENSE_COMPLETE = "com.example.mac.carwash.order.input.comp";
     public static final String INPUT_LICENSE_KEY = "LICENSE";
     private RecyclerView mRecyclerView;
+    private RefreshLayout mRefreshLayout;
+    private LinearLayout linearLayout;
     private EditText inputbox1,inputbox2,
             inputbox3,inputbox4,
             inputbox5,inputbox6,inputbox7;
@@ -51,6 +57,9 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     private LicenseKeyboardUtil keyboardUtil;
     private KeyboardView keyboardView;
     private  BaseActivity activity;
+    private IntentFilter finishFilter;
+    //判断广播是否被注册
+    private boolean mReceiverTag = false;
     public static NonMemberFragment newInstance() {
         NonMemberFragment fragment = new NonMemberFragment();
         return fragment;
@@ -66,12 +75,33 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 
     public void init(){
         activity=(BaseActivity) getActivity();
+        linearLayout = (LinearLayout) view.findViewById(R.id.linear_unMember_info);
+        mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_unMember_info);
         OrderAdapter adapter = new OrderAdapter(initOrderBean(),getContext());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerView.setAdapter(adapter);
         mRecyclerView.addItemDecoration(new RecycleViewDivider(
                 view.getContext(), LinearLayoutManager.VERTICAL, 25, getResources().getColor(R.color.black)));
-        mRecyclerView.setAdapter(adapter);
+        mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
+        //刷新
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+//				mData.clear();
+//				mNameAdapter.notifyDataSetChanged();
+                refreshlayout.finishRefresh();
+            }
+        });
+
+        //加载更多
+        mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+//		 for(int i=0;i<30;i++){ mData.add("小明"+i); }
+//		 mNameAdapter.notifyDataSetChanged();
+                refreshlayout.finishLoadmore();
+            } });
         inputbox1 = (EditText) view.findViewById(R.id.et_car_license_inputbox1);
         inputbox2 = (EditText) view.findViewById(R.id.et_car_license_inputbox2);
         inputbox3 = (EditText) view.findViewById(R.id.et_car_license_inputbox3);
@@ -89,41 +119,54 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         boxesContainer = (LinearLayout) view.findViewById(R.id.ll_car_license_inputbox_content);
         keyboardView = (KeyboardView)view.findViewById(R.id.keyboard_view);
         //输入车牌完成后的intent过滤器
-        IntentFilter finishFilter = new IntentFilter(INPUT_LICENSE_COMPLETE);
-
-        final BroadcastReceiver receiver =  new  BroadcastReceiver() {
-            @Override
-            public   void  onReceive(Context context, Intent intent) {
-                String license = intent.getStringExtra(INPUT_LICENSE_KEY);
-                if(license != null && license.length() > 0){
-                    boxesContainer.setVisibility(View.GONE);
-                    if(keyboardUtil != null){
-                        keyboardUtil.hideKeyboard();
-                    }
-                    customDialog(license,50);
-                }
-                activity.unregisterReceiver(this);
-            }
-        };
+        finishFilter = new IntentFilter(INPUT_LICENSE_COMPLETE);
         activity.registerReceiver(receiver, finishFilter);
+        mReceiverTag = true;
     }
+
+    //当键盘输入完毕时候，activity接收到键盘输入的所有内容，则此次广播结束
+    //所以每次出来键盘时，要重新注册广播
+    final BroadcastReceiver receiver =  new  BroadcastReceiver() {
+        @Override
+        public   void  onReceive(Context context, Intent intent) {
+            String license = intent.getStringExtra(INPUT_LICENSE_KEY);
+            if(license != null && license.length() > 0){
+                boxesContainer.setVisibility(View.GONE);
+                if(keyboardUtil != null){
+                    keyboardUtil.hideKeyboard();
+                }
+                customDialog(license,50);
+            }
+            activity.unregisterReceiver(this);
+            mReceiverTag = false;
+        }
+    };
+
 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.btn_add_car:
-                mRecyclerView.setVisibility(View.INVISIBLE);
+                if(!mReceiverTag){
+                activity.registerReceiver(receiver, finishFilter);mReceiverTag=true;}
+                linearLayout.setVisibility(View.INVISIBLE);
+                //mRecyclerView.setVisibility(View.INVISIBLE);
                 boxesContainer.setVisibility(View.VISIBLE);
                 keyboardUtil = new LicenseKeyboardUtil(getContext(),new EditText[]{inputbox1,inputbox2,inputbox3,
                         inputbox4,inputbox5,inputbox6,inputbox7});
                 keyboardUtil.showKeyboard();
                 break;
             case R.id.btn_read_unmember_info:
+                if(mReceiverTag){
+                activity.unregisterReceiver(receiver);mReceiverTag=false;}
                 boxesContainer.setVisibility(View.GONE);
                 keyboardView.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                linearLayout.setVisibility(View.VISIBLE);
+              //  mRecyclerView.setVisibility(View.VISIBLE);
                 break;
             case R.id.btn_close_input:
+                if(mReceiverTag){
+                    activity.unregisterReceiver(receiver);mReceiverTag=false;}
                 boxesContainer.setVisibility(View.GONE);
                 keyboardView.setVisibility(View.GONE);
                 break;
@@ -199,5 +242,14 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         dataList.add(data1);dataList.add(data2);dataList.add(data3);dataList.add(data4);dataList.add(data5);dataList.add(data6);dataList.add(data7);dataList.add(data8);dataList.add(data9);dataList.add(data10);dataList.add(data11);dataList.add(data12);dataList.add(data13);dataList.add(data14);dataList.add(data15);dataList.add(data16);
         orderBean.setData(dataList);
         return orderBean;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(!mReceiverTag){
+            activity.unregisterReceiver(receiver);
+            mReceiverTag=false;
+        }
     }
 }

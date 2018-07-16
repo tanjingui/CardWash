@@ -69,14 +69,6 @@ public class UpdateManager {
         this.mContext = context;
     }
 
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if(msg.what==111){
-
-            }
-        }
-    };
     /** 显示更新对话框 */
     //两个参数 double serverVersion,double clientVersion
     public void showNoticeDialog() {
@@ -89,7 +81,7 @@ public class UpdateManager {
             public void onClick(DialogInterface arg0, int arg1) {
                 arg0.dismiss();
                 get(activity);
-                showDownloadDialog();
+
 //                new PermissionDealResultCallback() {
 //                    @Override
 //                    public void onResult() {
@@ -205,6 +197,9 @@ public class UpdateManager {
                 case DOWNLOAD_FAILED:
                     Toast.makeText(mContext, "网络断开，请稍候再试", Toast.LENGTH_LONG).show();
                     break;
+                case 111:
+                    showDownloadDialog();
+                    break;
                 default:
                     break;
             }
@@ -221,6 +216,7 @@ public class UpdateManager {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(Uri.parse("file://" + apkFile.toString()), "application/vnd.android.package-archive");
         mContext.startActivity(intent);
+        activity.finish();
     }
 
 
@@ -228,7 +224,10 @@ public class UpdateManager {
     public void resolveUpdateInfo(String updateJsonInfo){
         Gson gson = new Gson();
         UpdateResponseInfo info = gson.fromJson(updateJsonInfo, UpdateResponseInfo.class);
+        Log.i("88888",info.toString());
         apkCode = Integer.parseInt(info.getData().getResultset1().get(0).getQCODE());
+        //如果版本无更新 直接return
+        if(apkCode==0){return;}
         updateDescription = info.getData().getResultset1().get(0).getQVERSIONDESC();
         apkUrl = info.getData().getResultset1().get(0).getQFILEPATH();
        if(apkCode==1){
@@ -248,6 +247,9 @@ public class UpdateManager {
                     public void onResult(List<PermissionInfo> acceptList, List<PermissionInfo> rationalList, List<PermissionInfo> deniedList) {
                         if (!acceptList.isEmpty()) {
                             Toast.makeText(activity, acceptList.get(0).getName() + " is accepted", Toast.LENGTH_SHORT).show();
+                           Message message = new Message();
+                            message.what=111;
+                            mHandler.sendMessage(message);
                         }
                         if (!rationalList.isEmpty()) {
                             Toast.makeText(activity,"您禁止权限则无法使用该app",Toast.LENGTH_SHORT).show();

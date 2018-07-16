@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.order.OrderAdapter;
 import com.example.mac.carwash.order.OrderBean;
@@ -14,6 +15,7 @@ import com.example.mac.carwash.view.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
 import java.util.ArrayList;
 import java.util.List;
 

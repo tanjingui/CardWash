@@ -48,7 +48,7 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:gravity="center"
-                   android:text="已完成"
+                   android:text="未结算"
                    android:textColor="#000000"
                    android:textSize="15dip" />
            </LinearLayout>
@@ -69,7 +69,7 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:gravity="center"
-                   android:text="已取消"
+                   android:text="已结算"
                    android:textColor="#000000"
                    android:textSize="15dip" />
            </LinearLayout>

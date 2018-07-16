@@ -7,14 +7,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:left_tv_visible="false"
-    app:right_btn_visible="false"
+    app:right_btn_visible="true"
+    app:right_btn_src="@drawable/icon_find_washrecord"
     app:title_visible="true"
     app:title_text="会员记录">
     <include layout="@layout/activity_main_top_tab" />
+
     <com.example.mac.carwash.view.CustomViewpagerView
         android:id="@+id/toolbar_viewPager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >
-    </com.example.mac.carwash.view.CustomViewpagerView>
+        android:layout_weight="1"></com.example.mac.carwash.view.CustomViewpagerView>
 </com.example.mac.carwash.view.CustomToolBar>

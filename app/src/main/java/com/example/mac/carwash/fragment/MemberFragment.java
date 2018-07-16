@@ -1,27 +1,23 @@
 package com.example.mac.carwash.fragment;
 
-import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.adapter.ChatFragment;
 import com.example.mac.carwash.adapter.ContactsFragment;
 import com.example.mac.carwash.adapter.FragmentAdapter;
 import com.example.mac.carwash.adapter.FriendFragment;
-import com.example.mac.carwash.util.ScreenSizeUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +100,7 @@ public class MemberFragment extends Fragment {
                 LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mTabLineIv
                         .getLayoutParams();
 
-                Log.e("offset:", offset + "");
+            //    Log.e("offset:", offset + "");
                 /**
                  * 利用currentIndex(当前所在页面)和position(下一个页面)以及offset来
                  * 设置mTabLineIv的左边距 滑动场景：
@@ -193,36 +189,4 @@ public class MemberFragment extends Fragment {
         mTabContactsTv.setTextColor(Color.BLACK);
     }
 
-
-
-    private void customDialog() {
-        final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
-        View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
-        TextView cancel = (TextView) view.findViewById(R.id.cancel);
-        TextView confirm = (TextView) view.findViewById(R.id.confirm);
-        dialog.setContentView(view);
-        //使得点击对话框外部不消失对话框
-        dialog.setCanceledOnTouchOutside(true);
-        //设置对话框的大小
-        view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(getActivity()).getScreenHeight() * 0.23f));
-        Window dialogWindow = dialog.getWindow();
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.width = (int) (ScreenSizeUtils.getInstance(getActivity()).getScreenWidth() * 0.75f);
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.gravity = Gravity.CENTER;
-        dialogWindow.setAttributes(lp);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
 }

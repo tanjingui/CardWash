@@ -57,6 +57,14 @@ public class UpdateResponseInfo {
             return QFILEPATH;
         }
 
+        @Override
+        public String toString() {
+            return "Resultset1{" +
+                    "QCODE='" + QCODE + '\'' +
+                    ", QVERSIONDESC='" + QVERSIONDESC + '\'' +
+                    ", QFILEPATH='" + QFILEPATH + '\'' +
+                    '}';
+        }
     }
 
     public class Data {

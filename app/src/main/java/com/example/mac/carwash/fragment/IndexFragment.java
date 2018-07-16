@@ -19,9 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.activity.CaptureActivity;
@@ -38,7 +41,10 @@ public class IndexFragment extends Fragment {
     private Button btnWashCar;
     BaseActivity activity;
     private Handler mHandler;
+    private Spinner spinner;
     TextView textView;
+
+
     public static IndexFragment newInstance(String cardCode) {
         Bundle args = new Bundle();
         args.putSerializable("cardCode",cardCode);
@@ -56,6 +62,13 @@ public class IndexFragment extends Fragment {
     }
 
     public void initView(){
+        spinner = (Spinner) view.findViewById(R.id.spinner_select_store);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter
+                .createFromResource(activity, R.array.select_store,
+                        R.layout.spinner_self_item);
+        adapter.setDropDownViewResource(android.
+                R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
         textView = (TextView) view.findViewById(R.id.tv_QRContent);
         BaseActivity activity=(BaseActivity) getActivity();
        // mHandler=activity.handler;

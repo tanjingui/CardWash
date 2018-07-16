@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:left_tv_visible="false"
-    app:right_btn_visible="false"
+    app:right_btn_visible="true"
+    app:right_btn_src="@drawable/icon_find_washrecord"
     app:title_visible="true"
     app:title_text="非会员">
 
@@ -72,42 +73,56 @@
                 android:id="@+id/et_car_license_inputbox1"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
             <EditText
                 android:id="@+id/et_car_license_inputbox2"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
             <EditText
                 android:id="@+id/et_car_license_inputbox3"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
             <EditText
                 android:id="@+id/et_car_license_inputbox4"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
             <EditText
                 android:id="@+id/et_car_license_inputbox5"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
             <EditText
                 android:id="@+id/et_car_license_inputbox6"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
             <EditText
                 android:id="@+id/et_car_license_inputbox7"
                 android:background="@drawable/car_license_inputbox"
                 android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
         </LinearLayout>
@@ -119,6 +134,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
         >
+
         <android.inputmethodservice.KeyboardView
             android:id="@+id/keyboard_view"
             android:layout_width="fill_parent"
@@ -137,10 +153,26 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
+        android:id="@+id/linear_unMember_info"
+        android:orientation="horizontal"
         android:visibility="gone"
-        android:id="@+id/recyclerView_unMember_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srlAccentColor="#00000000"
+            app:srlPrimaryColor="#00000000"
+            app:srlEnablePreviewInEditMode="true">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView_unMember_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </LinearLayout>
+
+
 </com.example.mac.carwash.view.CustomToolBar>
