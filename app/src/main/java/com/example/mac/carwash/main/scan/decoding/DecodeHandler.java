@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.mac.carwash.decoding;
+package com.example.mac.carwash.main.scan.decoding;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,8 +29,8 @@ import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.example.mac.carwash.activity.CaptureActivity;
-import com.example.mac.carwash.camera.CameraManager;
-import com.example.mac.carwash.camera.PlanarYUVLuminanceSource;
+import com.example.mac.carwash.main.scan.camera.CameraManager;
+import com.example.mac.carwash.main.scan.camera.PlanarYUVLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 
 import java.util.Hashtable;

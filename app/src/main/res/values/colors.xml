@@ -37,7 +37,7 @@
 
     <color name="peachpuff">#FFDAB9</color><!--桃色 -->
 
-    <color name="gold">#FFD700</color><!--金色 -->
+    <color name="gold">#ffd700</color><!--金色 -->
 
     <color name="pink">#FFC0CB</color><!--粉红色 -->
 
@@ -191,7 +191,7 @@
 
     <color name="skyblue">#87CEEB</color><!--天蓝色 -->
 
-    <color name="gray">#808080</color><!--灰色 -->
+    <color name="gray">#d7effa</color><!--灰色 -->
 
     <color name="grey">#808080</color><!--灰色 -->
 
@@ -215,7 +215,7 @@
 
     <color name="slategray">#708090</color><!--灰石色 -->
 
-    <color name="slategrey">#708090</color><!--灰石色 -->
+    <color name="slategrey">#c9d9e8</color><!--灰石色 -->
 
     <color name="olivedrab">#6B8E23</color><!--深绿褐色 -->
 
@@ -255,13 +255,13 @@
 
     <color name="seagreen">#2E8B57</color><!--海绿色 -->
 
-    <color name="forestgreen">#228B22</color><!--森林绿 -->
+    <color name="forestgreen">#72ed72</color><!--森林绿 -->
 
     <color name="lightseagreen">#20B2AA</color><!--亮海蓝色 -->
 
     <color name="dodgerblue">#1E90FF</color><!--闪兰色 -->
 
-    <color name="midnightblue">#191970</color><!--中灰兰色 -->
+    <color name="midnightblue">#363639</color><!--中灰兰色 -->
 
     <color name="aqua">#00ffae</color><!--浅绿色 -->
 
@@ -300,7 +300,7 @@
 
     <!-- QRCode scanner color begin -->
     <color name="viewfinder_mask">#60000000</color>
-    <color name="result_view">#B0000000</color>
+    <color name="result_view">#b0e7d9d9</color>
     <color name="viewfinder_frame">#90FFFFFF</color>
     <color name="result_point_color">#C0FFFF00</color>
     <color name="laser_color">#0F0</color>

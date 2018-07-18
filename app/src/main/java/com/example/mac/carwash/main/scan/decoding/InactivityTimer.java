@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.mac.carwash.decoding;
+package com.example.mac.carwash.main.scan.decoding;
 
 import android.app.Activity;
 

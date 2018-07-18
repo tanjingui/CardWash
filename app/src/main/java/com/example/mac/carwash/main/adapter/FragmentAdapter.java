@@ -1,4 +1,4 @@
-package com.example.mac.carwash.adapter;
+package com.example.mac.carwash.main.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

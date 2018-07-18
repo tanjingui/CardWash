@@ -3,20 +3,24 @@ package com.example.mac.carwash.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.adapter.ChatFragment;
-import com.example.mac.carwash.adapter.ContactsFragment;
-import com.example.mac.carwash.adapter.FragmentAdapter;
-import com.example.mac.carwash.adapter.FriendFragment;
+import com.example.mac.carwash.main.adapter.AllSettledFragment;
+import com.example.mac.carwash.main.adapter.AlreSettledFragment;
+import com.example.mac.carwash.main.adapter.FragmentAdapter;
+import com.example.mac.carwash.main.adapter.UnsettledFragment;
+import com.example.mac.carwash.main.search.SearchFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,10 @@ public class MemberFragment extends Fragment {
     private List<Fragment> mFragmentList = new ArrayList<>();
     private FragmentAdapter mFragmentAdapter;
 
+    //父activity fragmentManager引用
+    private FragmentManager mFragmentManager;
+    private FragmentTransaction transaction;
+
     /**
      * Tab显示内容TextView
      */
@@ -51,9 +59,9 @@ public class MemberFragment extends Fragment {
     /**
      * Fragment
      */
-    private ChatFragment mChatFg;
-    private FriendFragment mFriendFg;
-    private ContactsFragment mContactsFg;
+    private AllSettledFragment mChatFg;
+    private UnsettledFragment mFriendFg;
+    private AlreSettledFragment mContactsFg;
     /**
      * ViewPager的当前选中页
      */
@@ -62,9 +70,10 @@ public class MemberFragment extends Fragment {
      * 屏幕的宽度
      */
     private int screenWidth;
-
     private View view;
 
+    //ToolBar
+    private Button rightBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.layout_interface_member, null);
@@ -75,6 +84,7 @@ public class MemberFragment extends Fragment {
     }
 
     private void findById() {
+        rightBtn = (Button) view.findViewById(R.id.toolbar_right_btn);
         mTabContactsTv = (TextView) view.findViewById(R.id.id_contacts_tv);
         mTabChatTv = (TextView) view.findViewById(R.id.id_chat_tv);   mTabChatTv.setTextSize(18);
         mTabFriendTv = (TextView) view.findViewById(R.id.id_friend_tv);
@@ -83,13 +93,18 @@ public class MemberFragment extends Fragment {
     }
 
     private void init() {
-        mFriendFg = new FriendFragment();
-        mContactsFg = new ContactsFragment();
-        mChatFg = new ChatFragment();
+        rightBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceFragment(SearchFragment.newInstance(getContext()));
+            }
+        });
+        mFriendFg = new UnsettledFragment();
+        mContactsFg = new AlreSettledFragment();
+        mChatFg = new AllSettledFragment();
         mFragmentList.add(mChatFg);
         mFragmentList.add(mFriendFg);
         mFragmentList.add(mContactsFg);
-
         mFragmentAdapter = new FragmentAdapter(
                 getChildFragmentManager(), mFragmentList);
         mPageVp.setAdapter(mFragmentAdapter);
@@ -187,6 +202,15 @@ public class MemberFragment extends Fragment {
         mTabChatTv.setTextColor(Color.BLACK);
         mTabFriendTv.setTextColor(Color.BLACK);
         mTabContactsTv.setTextColor(Color.BLACK);
+    }
+
+
+    private void replaceFragment(Fragment fragment) {
+        mFragmentManager =getActivity().getSupportFragmentManager();
+        transaction = mFragmentManager.beginTransaction();
+        transaction.replace(R.id.content, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
 }

@@ -1,29 +1,31 @@
-package com.example.mac.carwash.order;
+package com.example.mac.carwash.main.order;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mac.carwash.R;
-import java.util.List;
+import com.example.mac.carwash.main.order.OrderBean.Data;
 
+import java.util.List;
 /**
  * Created by mac on 2018/7/11.
  */
 
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder> {
-    List<OrderBean.Data>dataList;//存放数据
+    List<Data>mDataList;//存放数据
     Context context;
-
-    public OrderAdapter(OrderBean orderBean, Context context) {
-        dataList = orderBean.getData();
+    public OrderAdapter(List<Data> dataList, Context context) {
+        mDataList = dataList;
         this.context = context;
     }
 
@@ -37,7 +39,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         //设置textView显示内容为list里的对应项
-        OrderBean.Data data = dataList.get(position);
+        Log.i("ttttttt",mDataList.size()+"");
+        Data data = mDataList.get(position);
         holder.orderTime.setText(String.format(context.getResources().getString(R.string.user_order_time), data.getTIME()));
         holder.orderState.setText(data.getISSETTLEMENT());
         holder.orderNum.setText(String.format(context.getResources().getString(R.string.order_num), data.getId()));
@@ -64,7 +67,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
     @Override
     public int getItemCount() {
-        return dataList.size();
+        if(mDataList==null) return 0;
+        return mDataList.size();
     }
 
     //这里定义的是子项的类，不要在这里直接对获取对象进行操作
@@ -89,8 +93,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
     //在指定位置插入，原位置的向后移动一格
     public boolean addItem(int position, OrderBean.Data data) {
-        if (position < dataList.size() && position >= 0) {
-            dataList.add(position, data);
+        if (position < mDataList.size() && position >= 0) {
+            mDataList.add(position, data);
             notifyItemInserted(position);
             return true;
         }
@@ -99,8 +103,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
     //去除指定位置的子项
     public boolean removeItem(int position) {
-        if (position < dataList.size() && position >= 0) {
-            dataList.remove(position);
+        if (position < mDataList.size() && position >= 0) {
+            mDataList.remove(position);
             notifyItemRemoved(position);
             return true;
         }
@@ -109,7 +113,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
     //清空显示数据
     public void clearAll() {
-        dataList.clear();
+        mDataList.clear();
         notifyDataSetChanged();
     }
 }

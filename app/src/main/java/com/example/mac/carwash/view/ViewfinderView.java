@@ -34,7 +34,7 @@ import android.view.View;
 
 import com.example.mac.carwash.R;
 import com.google.zxing.ResultPoint;
-import com.example.mac.carwash.camera.CameraManager;
+import com.example.mac.carwash.main.scan.camera.CameraManager;
 import java.util.Collection;
 import java.util.HashSet;
 

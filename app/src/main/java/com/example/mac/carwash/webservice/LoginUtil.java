@@ -1,6 +1,8 @@
 package com.example.mac.carwash.webservice;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.constants.InterfaceDefinition;
 import com.example.mac.carwash.util.PreferencesUtil;
@@ -54,6 +56,7 @@ public class LoginUtil {
         webServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
+                Log.i("kkkkkkk",""+json);
                 removeUserInfo();
                 JSONObject obj = JsonUtil.toJsonObject(json);
                 int code = obj.optInt("code");

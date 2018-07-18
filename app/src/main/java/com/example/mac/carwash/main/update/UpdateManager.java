@@ -1,4 +1,4 @@
-package com.example.mac.carwash.update;
+package com.example.mac.carwash.main.update;
 
 /**
  * Created by mac on 2018/7/14.

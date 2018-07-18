@@ -1,5 +1,5 @@
 <resources>
-    <string name="versionCode">1.0.0</string>
+    <string name="versionCode">2000000</string>
     <string name="app_name">车易通洗车</string>
     <string name="user_order_time">开单时间:  %1$s</string>
     <string name="order_num">订单号:  %1$s </string>
@@ -23,4 +23,10 @@
     <string name="dialog_choose_update_title">发现了新版本</string>
     <string name="dialog_btn_confirm_download">升级</string>
     <string name="dialog_btn_cancel_download">忽略</string>
+
+
+<!--侧滑样式-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
 </resources>

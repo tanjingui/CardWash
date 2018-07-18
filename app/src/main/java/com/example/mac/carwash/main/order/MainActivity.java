@@ -1,4 +1,4 @@
-package com.example.mac.carwash.order;
+package com.example.mac.carwash.main.order;
 
 /**
  * Created by mac on 2018/7/12.

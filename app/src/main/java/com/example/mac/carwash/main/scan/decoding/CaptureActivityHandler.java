@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.mac.carwash.decoding;
+package com.example.mac.carwash.main.scan.decoding;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,7 +29,7 @@ import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.CaptureActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import com.example.mac.carwash.camera.CameraManager;
+import com.example.mac.carwash.main.scan.camera.CameraManager;
 import com.example.mac.carwash.view.ViewfinderResultPointCallback;
 
 import java.util.Vector;

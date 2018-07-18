@@ -1,4 +1,4 @@
-package com.example.mac.carwash.encoding;
+package com.example.mac.carwash.main.scan.encoding;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

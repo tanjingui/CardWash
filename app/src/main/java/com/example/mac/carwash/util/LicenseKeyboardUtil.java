@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.order.MainActivity;
+import com.example.mac.carwash.main.order.MainActivity;
 
 
 /**

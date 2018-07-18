@@ -1,4 +1,4 @@
-package com.example.mac.carwash.order;
+package com.example.mac.carwash.main.order;
 import java.util.List;
 
 public class OrderBean {
@@ -34,7 +34,7 @@ public class OrderBean {
         return msg;
     }
 
-    public class Data {
+    public static class Data {
         private String head;
         private String fee;
         private String carmark;

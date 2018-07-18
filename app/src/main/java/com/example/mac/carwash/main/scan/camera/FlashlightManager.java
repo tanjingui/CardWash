@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.mac.carwash.camera;
+package com.example.mac.carwash.main.scan.camera;
 
 import android.os.IBinder;
 import android.util.Log;

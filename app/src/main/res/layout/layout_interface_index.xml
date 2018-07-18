@@ -36,13 +36,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/card_amount"
+                android:id="@+id/tv_info_member_name"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_margin="6dp"
                 android:layout_weight="0.7"
                 android:gravity="left|center_vertical"
-                android:text="张三"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -63,13 +63,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/card_price"
+                android:id="@+id/tv_info_member_level"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_margin="6dp"
                 android:layout_weight="0.7"
                 android:gravity="left|center_vertical"
-                android:text="大众尊享A会员"
+                android:text=""
                 android:textColor="@color/purple"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -92,13 +92,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/card_left_amount"
+                android:id="@+id/tv_info_car_num"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_margin="6dp"
                 android:layout_weight="0.7"
                 android:gravity="left|center_vertical"
-                android:text="粤SS963121"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -120,13 +120,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/card_get_time"
+                android:id="@+id/tv_info_order_price"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_margin="6dp"
                 android:layout_weight="0.7"
                 android:gravity="left|center_vertical"
-                android:text="32元"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -147,13 +147,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/card_termOfValidity"
+                android:id="@+id/tv_info_banlance"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_margin="6dp"
                 android:layout_weight="0.7"
                 android:gravity="left|center_vertical"
-                android:text="1665.2元"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -174,13 +174,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/card_instructions"
+                android:id="@+id/tv_info_remain"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="0.7"
                 android:gravity="left|center_vertical"
-                android:text="16次"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -242,14 +242,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-
-
-
-        <TextView
-            android:id="@+id/tv_QRContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="null" />
 
     </LinearLayout>
 </com.example.mac.carwash.view.CustomToolBar>

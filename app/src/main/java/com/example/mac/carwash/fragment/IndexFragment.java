@@ -6,7 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -28,35 +28,37 @@ import android.widget.Toast;
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.activity.CaptureActivity;
+import com.example.mac.carwash.jsonBean.CustomerInfoBean;
+import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
 import com.example.mac.carwash.util.Constant;
 import com.example.mac.carwash.util.ScreenSizeUtils;
+import com.example.mac.carwash.webservice.PubData;
+import com.example.mac.carwash.webservice.WebServiceHelp;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by mac on 2018/7/9.
  */
 
-public class IndexFragment extends Fragment {
+public class IndexFragment extends Fragment  {
     private View view;
     private Button btnQrCode;
     private Button btnWashCar;
     BaseActivity activity;
-    private Handler mHandler;
     private Spinner spinner;
-    TextView textView;
 
 
-    public static IndexFragment newInstance(String cardCode) {
-        Bundle args = new Bundle();
-        args.putSerializable("cardCode",cardCode);
+    public static IndexFragment newInstance() {
         IndexFragment fragment = new IndexFragment();
-        fragment.setArguments(args);
         return fragment;
     }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.layout_interface_index,container, false);
         activity=(BaseActivity) getActivity();
-//        mHandler=activity.handler;
         initView();
         return view;
     }
@@ -69,9 +71,8 @@ public class IndexFragment extends Fragment {
         adapter.setDropDownViewResource(android.
                 R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        textView = (TextView) view.findViewById(R.id.tv_QRContent);
-        BaseActivity activity=(BaseActivity) getActivity();
-       // mHandler=activity.handler;
+
+
         btnQrCode = (Button)view.findViewById(R.id.toolbar_right_btn);
         btnWashCar = (Button) view.findViewById(R.id.btn_washCard);
         view.findViewById(R.id.content);
@@ -108,8 +109,10 @@ public class IndexFragment extends Fragment {
         if (requestCode == Constant.REQ_QR_CODE && resultCode == Activity.RESULT_OK) {
             Bundle bundle = data.getExtras();
             String scanResult = bundle.getString(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+             //这个bug还得继续测试------------------------------------------------------------
             //将扫描出的信息显示出来
-            textView.setText(scanResult);
+            InItRequest(scanResult);
+          //  textView.setText(scanResult);
 //            Message msg = new Message();
 //            msg.what = 1111;
 //            msg.obj = scanResult;
@@ -145,7 +148,7 @@ public class IndexFragment extends Fragment {
         dialog_content.setText(Html.fromHtml(title));
         dialog.setContentView(view);
         //使得点击对话框外部不消失对话框
-        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCanceledOnTouchOutside(false);
         //设置对话框的大小
         view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(getActivity()).getScreenHeight() * 0.23f));
         Window dialogWindow = dialog.getWindow();
@@ -157,17 +160,13 @@ public class IndexFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity,"提交失败",Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     changeButtonState();
-//                Message msg = new Message();
-//                msg.what = 1111;
-//                mHandler.sendMessage(msg);
+                openBillRequest();
                 dialog.dismiss();
             }
         });
@@ -177,9 +176,69 @@ public class IndexFragment extends Fragment {
 
     public void changeButtonState(){
         Button button =  (Button)view.findViewById(R.id.btn_washCard);
-        button.setText("已提交");
-        Toast.makeText(activity,"提交成功",Toast.LENGTH_SHORT).show();
+        button.setText("已开单");
         button.setTextColor(getResources().getColor(R.color.darkslategray));
         button.setEnabled(false);
     }
+
+    // 检查qrcode接口.
+    private void InItRequest(String qrcode) {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
+        resMap.put("qrcode", qrcode);
+        resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
+        resMap.put("sqlType", "sql");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,false,"2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+                //通知UI 关闭结束等待中的Dialog
+//                Message message = new Message();
+//                message.what=111;mHandler.sendMessage(message);
+                //      mHandler.sendEmptyMessageDelayed(111, 2000);
+                //测试json：jsonStr server：json
+                Gson gson = new Gson();
+                CustomerInfoBean customerInfoBean;
+                customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
+                CustomerInfoBean.Data data = customerInfoBean.getData();
+                Message message = new Message();
+                message.what=111;message.obj = data;
+                BaseActivity baseActivity = (BaseActivity) getActivity();
+                baseActivity.handler.sendMessage(message);
+              //  Log.i("mmmmmmmmmmmmmm","  "+json);
+            }
+        });
+        mServiceHelp.start(resMap,getActivity());
+    }
+
+    //开单请求
+    private void openBillRequest() {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sessionId", "54ec105bd3fc4106ad8d4ab45b6addf7");
+        resMap.put("SETTLEMENTID", "1");
+        resMap.put("PRICE", "0.0");
+        resMap.put("sqlType", "proc");
+        resMap.put("PROID", "900.0");
+        resMap.put("sqlKey",  "CP_ADD_XICHE_ORDER");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,false,"2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+                Gson gson = new Gson();
+                OpenBillInfoBean openBillInfoBean = gson.fromJson(json, OpenBillInfoBean.class);
+                OpenBillInfoBean.Data data = openBillInfoBean.getData();
+                if( data.getOCODE().equals("00")){
+                    changeButtonState();
+                    Toast.makeText(getActivity(),"洗车开单成功!",Toast.LENGTH_SHORT).show();
+                }else if(data.getOCODE().equals("99")){
+                    Toast.makeText(getActivity(),"失败了，存在未结算的洗车单",Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getActivity(),"未知错误",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        mServiceHelp.start(resMap,getActivity());
+    }
+
+
 }

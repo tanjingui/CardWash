@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.mac.carwash.decoding;
+package com.example.mac.carwash.main.scan.decoding;
 
 /**
  * This class provides the constants to use when sending an Intent to Barcode Scanner.

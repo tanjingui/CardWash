@@ -26,16 +26,17 @@ import android.widget.Toast;
 
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
-import com.example.mac.carwash.order.OrderAdapter;
-import com.example.mac.carwash.order.OrderBean;
+import com.example.mac.carwash.main.order.OrderAdapter;
+import com.example.mac.carwash.main.order.OrderBean;
+import com.example.mac.carwash.util.JsonUtils;
 import com.example.mac.carwash.util.LicenseKeyboardUtil;
 import com.example.mac.carwash.util.ScreenSizeUtils;
 import com.example.mac.carwash.view.RecycleViewDivider;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -217,31 +218,12 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 
 
 
-    public OrderBean initOrderBean(){
-        OrderBean orderBean;
+    public List<OrderBean.Data> initOrderBean(){
         List<OrderBean.Data> dataList;
-        orderBean = new OrderBean();
-        dataList = new ArrayList<>();
-        OrderBean.Data data1 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","50","粤asfd54","已结算","万经思","普通体验会员","2017-08-15 02:30" +
-                "","2018071102364");
-        OrderBean.Data data2 = orderBean.new Data("http://c.hiphotos.baidu.com/image/pic/item/72f082025aafa40f99d4e82aa764034f78f01932.jpg","50","新asafd4","已取消","李万海","大众A级会员","2015-08-15 22:30","2018071102364");
-        OrderBean.Data data3 = orderBean.new Data("http://d.hiphotos.baidu.com/image/pic/item/bd3eb13533fa828b1d864115f11f4134960a5a9b.jpg","50","粤asfd54","已取消","安没差","普通体验会员","2014-08-15 02:30","2018071102364");
-        OrderBean.Data data4 = orderBean.new Data("","0元","粤asfd54","已结算","万经思","普通体验会员","2015-8-15","2018071102364");
-        OrderBean.Data data5 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","50","粤asfd54","已结算","万经思","体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data6 = orderBean.new Data("","0元","粤asfd54","已结算","万经思","普通体验会员","2015-8-15","2018071102364");
-        OrderBean.Data data7 = orderBean.new Data("http://g.hiphotos.baidu.com/image/pic/item/2cf5e0fe9925bc319a8efc6352df8db1ca13707e.jpg","50","京asfd54","已结算","万经思","普通体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data8 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","普通体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data9 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","非asfd54","已结算","万经思","普通体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data10 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data11 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data12 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2017-08-15 02:30","2018071102364");
-        OrderBean.Data data13 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2015-8-15","2018071102364");
-        OrderBean.Data data14 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2015-8-15","2018071102364");
-        OrderBean.Data data15 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2015-8-15","2018071102364");
-        OrderBean.Data data16 = orderBean.new Data("https://b-ssl.duitang.com/uploads/item/201605/05/20160505145557_dtYHf.jpeg","0","粤asfd54","已结算","万经思","体验会员","2015-8-15","2018071102364");
-        dataList.add(data1);dataList.add(data2);dataList.add(data3);dataList.add(data4);dataList.add(data5);dataList.add(data6);dataList.add(data7);dataList.add(data8);dataList.add(data9);dataList.add(data10);dataList.add(data11);dataList.add(data12);dataList.add(data13);dataList.add(data14);dataList.add(data15);dataList.add(data16);
-        orderBean.setData(dataList);
-        return orderBean;
+        String result = JsonUtils.getJson(getContext(), "member.json");
+        Gson gson = new Gson();
+        dataList = gson.fromJson(result, List.class);
+        return dataList;
     }
 
     @Override
