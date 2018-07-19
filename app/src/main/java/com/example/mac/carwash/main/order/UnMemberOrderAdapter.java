@@ -8,22 +8,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.jsonBean.OrderInfoBean;
-import com.example.mac.carwash.jsonBean.OrderInfoBean.Data;
+import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo;
+import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo.Data;
 
 import java.util.List;
 /**
  * Created by mac on 2018/7/11.
  */
 
-
-public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder> {
+   //非会员  和  会员都是显示同样的item子项布局，非会员隐藏头像，姓名，会员等级
+    //非会员订单字段叫 id
+public class UnMemberOrderAdapter extends RecyclerView.Adapter<UnMemberOrderAdapter.MyViewHolder> {
     List<Data>mDataList;//存放数据
     Context context;
-    public OrderAdapter(List<Data> dataList, Context context) {
+    public UnMemberOrderAdapter(List<Data> dataList, Context context) {
         mDataList = dataList;
         this.context = context;
     }
@@ -40,19 +40,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         //设置textView显示内容为list里的对应项
         Data data = mDataList.get(position);
         holder.orderTime.setText(String.format(context.getResources().getString(R.string.user_order_time), data.getTIME()));
-        holder.orderState.setText(data.getISSETTLEMENT()+"");
+        holder.orderState.setText((data.getISSETTLEMENT()==0)?"未结算":"已结算");
         holder.orderNum.setText(String.format(context.getResources().getString(R.string.order_num), data.getId()+""));
         holder.orderFee.setText(String.format(context.getResources().getString(R.string.user_wash_fee), data.getFee()));
-        holder.userName.setText(String.format(context.getResources().getString(R.string.user_name), data.getNAME()));
-        holder.userLevel.setText(data.getVip());
-        holder.carNum.setText(String.format(context.getResources().getString(R.string.user_car_num), data.getCarmark()));
-        Glide.with(context)
-                .load(data.getHead())
-                .error(R.mipmap.default_avator)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .dontAnimate()
-                .centerCrop()
-                .into(holder.userAvator);
+       holder.userName.setText(String.format(context.getResources().getString(R.string.user_car_num), data.getCarmark()));
+       holder.userLevel.setText("非会员用户");
+        holder.carNum.setText("");
+        holder.userAvator.setImageResource(R.mipmap.unmember_avator);
+//        Glide.with(context)
+//                .load("")
+//                .error(R.mipmap.default_avator)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .dontAnimate()
+//                .centerCrop()
+//                .into(holder.userAvator);
         //子项的点击事件监听
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +91,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
     /*之下的方法都是为了方便操作，并不是必须的*/
 
     //在指定位置插入，原位置的向后移动一格
-    public boolean addItem(int position, OrderInfoBean.Data data) {
+    public boolean addItem(int position, UnmemberWarshCarRecordsInfo.Data data) {
         if (position < mDataList.size() && position >= 0) {
             mDataList.add(position, data);
             notifyItemInserted(position);

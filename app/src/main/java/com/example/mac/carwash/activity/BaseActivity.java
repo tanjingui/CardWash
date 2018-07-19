@@ -22,7 +22,10 @@ import android.widget.Toast;
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mac.carwash.R;
+import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.dataInterface.getDataInterface;
 import com.example.mac.carwash.fragment.IndexFragment;
 import com.example.mac.carwash.fragment.MemberFragment;
@@ -30,6 +33,8 @@ import com.example.mac.carwash.fragment.NonMemberFragment;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
 import com.example.mac.carwash.view.BottomPopupOption;
 import com.google.gson.Gson;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by mac on 2018/7/9.
@@ -133,7 +138,18 @@ import com.google.gson.Gson;
 
         drawer = (DrawerLayout)this.findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) this.findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0).findViewById(R.id.circleImage_avator);
+        CircleImageView headerView = (CircleImageView)navigationView.getHeaderView(0).findViewById(R.id.circleImage_avator);
+        TextView tv1 = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_name);
+        TextView tv2 = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_post);
+        tv1.setText(UserInfoState.getUSER_name()+"");
+        tv2.setText(UserInfoState.getPOSITION()+"");
+        Glide.with(this)
+                .load(UserInfoState.getURL()+UserInfoState.getLOGOIMG())
+                .error(R.mipmap.default_avator)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .dontAnimate()
+                .centerCrop()
+                .into(headerView);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);

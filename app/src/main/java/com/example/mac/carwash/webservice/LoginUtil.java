@@ -1,14 +1,18 @@
 package com.example.mac.carwash.webservice;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.constants.InterfaceDefinition;
+import com.example.mac.carwash.constants.UserInfoState;
+import com.example.mac.carwash.jsonBean.UserInfoBean;
 import com.example.mac.carwash.util.PreferencesUtil;
 import com.example.mac.carwash.util.StringUtil;
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +60,13 @@ public class LoginUtil {
         webServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
-                Log.i("kkkkkkk",""+json);
+
+                //这里我先随便解析 保存一下  改进会用到sharePerfences 等等 再考虑
+                Gson gson = new Gson();
+                UserInfoBean userInfoBean = gson.fromJson(json,UserInfoBean.class);
+                UserInfoState.setUSER_name(userInfoBean.getData().getUSERINFO().get(0).getUSER_name()+"");
+                UserInfoState.setPOSITION(userInfoBean.getData().getUSERINFO().get(0).getPOSITION()+"");
+
                 removeUserInfo();
                 JSONObject obj = JsonUtil.toJsonObject(json);
                 int code = obj.optInt("code");

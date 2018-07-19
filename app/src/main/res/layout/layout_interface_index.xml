@@ -229,9 +229,18 @@
                 android:textColor="@drawable/btn_font_style"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <Button
-                android:id="@+id/btn_washCard_records"
+                android:id="@+id/btn_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_shape"
+                android:gravity="center"
+                android:text="结算"
+                android:textColor="@drawable/btn_font_style"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_washCar_records"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
@@ -241,6 +250,7 @@
                 android:textColor="@drawable/btn_font_style"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
         </LinearLayout>
 
 

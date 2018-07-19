@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //登录接口-----------------------------------------
                 LoginUtil loginUtil  = new LoginUtil(new LoginUtil.LoginInterface() {
                     @Override
                     public void callbackResult(int state, String stateName) {
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this,""+stateName,Toast.LENGTH_SHORT).show();
                         }
                     }
-                },"sx001","1996tjg",LoginActivity.this,"1", mServiceHelp);
+                },mUsername.getText().toString(),mPassword.getText().toString(),LoginActivity.this,"1", mServiceHelp);
                 loginUtil.startLogin(true);
 
             }
@@ -81,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    // 检查登录接口
+    // 更新接口
     private void InItRequest() {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("versionname", StringUtil.getVersionName(this));

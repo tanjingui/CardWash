@@ -28,9 +28,8 @@ import android.widget.Toast;
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
-import com.example.mac.carwash.main.order.OrderAdapter;
-import com.example.mac.carwash.jsonBean.OrderInfoBean;
-import com.example.mac.carwash.util.JsonUtils;
+import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo;
+import com.example.mac.carwash.main.order.UnMemberOrderAdapter;
 import com.example.mac.carwash.util.LicenseKeyboardUtil;
 import com.example.mac.carwash.util.ScreenSizeUtils;
 import com.example.mac.carwash.view.RecycleViewDivider;
@@ -42,7 +41,6 @@ import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,15 +79,13 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
     public void init(){
+
         activity=(BaseActivity) getActivity();
         linearLayout = (LinearLayout) view.findViewById(R.id.linear_unMember_info);
         mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_unMember_info);
-        OrderAdapter adapter = new OrderAdapter(initOrderBean(),getContext());
+        //这一句不加就得die！！！！！！！！！研究一下
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mRecyclerView.setAdapter(adapter);
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(
-                view.getContext(), LinearLayoutManager.VERTICAL, 25, getResources().getColor(R.color.black)));
         mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
         //刷新
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -97,7 +93,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
             public void onRefresh(RefreshLayout refreshlayout) {
 //				mData.clear();
 //				mNameAdapter.notifyDataSetChanged();
-                refreshlayout.finishRefresh();
+                queryTodayNonMemberWarshCarRecords();
             }
         });
 
@@ -164,6 +160,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
                 keyboardUtil.showKeyboard();
                 break;
             case R.id.btn_read_unmember_info:
+                queryTodayNonMemberWarshCarRecords();
                 if(mReceiverTag){
                 activity.unregisterReceiver(receiver);mReceiverTag=false;}
                 boxesContainer.setVisibility(View.GONE);
@@ -224,16 +221,16 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 
 
 
-
-    public List<OrderInfoBean.Data> initOrderBean(){
-        Gson gson = new Gson();
-        OrderInfoBean orderInfoBean;
-        List<OrderInfoBean.Data> dataList;
-        String result = JsonUtils.getJson(getContext(), "member.json");
-        orderInfoBean = gson.fromJson(result, OrderInfoBean.class);
-        dataList = orderInfoBean.getData();
-        return dataList;
-    }
+//
+//    public List<OrderInfoBean.Data> initOrderBean(){
+//        Gson gson = new Gson();
+//        OrderInfoBean orderInfoBean;
+//        List<OrderInfoBean.Data> dataList;
+//        String result = JsonUtils.getJson(getContext(), "member.json");
+//        orderInfoBean = gson.fromJson(result, OrderInfoBean.class);
+//        dataList = orderInfoBean.getData();
+//        return dataList;
+//    }
 
     @Override
     public void onDestroy() {
@@ -269,6 +266,35 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 				}else{
 					Toast.makeText(getActivity(),"未知错误",Toast.LENGTH_SHORT).show();
 				}
+            }
+        });
+        mServiceHelp.start(resMap,getActivity());
+    }
+
+
+
+    Boolean flag=true;
+    private void queryTodayNonMemberWarshCarRecords() {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sessionId", "6a874b1f630b4785a83f30052952e17e");
+        resMap.put("sqlKey",  "CS_XICHE_LISTV2");
+        resMap.put("sqlType", "sql");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadDataList", PubData.class,flag,"2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+                Gson gson = new Gson();
+                UnmemberWarshCarRecordsInfo unmemberWarshCarRecordsInfo = gson.fromJson(json, UnmemberWarshCarRecordsInfo.class);
+                //将server传来的数据 适配recyclerView
+                UnMemberOrderAdapter adapter = new UnMemberOrderAdapter(unmemberWarshCarRecordsInfo.getData(),getContext());
+                mRecyclerView.setAdapter(adapter);
+                mRecyclerView.addItemDecoration(new RecycleViewDivider(
+                        view.getContext(), LinearLayoutManager.VERTICAL, 12, getResources().getColor(R.color.black)));
+                if(flag==false){  //服务器已经完成数据更新 可以取消上拉刷新等待动画
+                    mRefreshLayout.finishRefresh();
+                }
+                flag = false;
+                Log.i("uuu服务器返回所有当天普通用户洗车信息：：",""+json);
             }
         });
         mServiceHelp.start(resMap,getActivity());

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textColor="#39b6de"
-            tools:text="已完成" />
+            tools:text=" " />
     </RelativeLayout>
 
     <RelativeLayout
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/purple"
-                    tools:text="大众尊享A会员" />
+                    tools:text=" " />
 
             </LinearLayout>
 

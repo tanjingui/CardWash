@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,8 @@ public class IndexFragment extends Fragment  {
     private View view;
     private Button btnQrCode;
     private Button btnWashCar;
+    private Button btnWashCarRecords;
+    private Button btnPay;
     BaseActivity activity;
     private Spinner spinner;
     private TextView mOrderPrice;
@@ -63,6 +66,8 @@ public class IndexFragment extends Fragment  {
     }
 
     public void initView(){
+        btnWashCarRecords = (Button)view.findViewById(R.id.btn_washCar_records);
+        btnPay = (Button)view.findViewById(R.id.btn_pay);
         mOrderPrice = (TextView)view.findViewById(R.id.tv_info_order_price);
         spinner = (Spinner) view.findViewById(R.id.spinner_select_store);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
@@ -85,7 +90,21 @@ public class IndexFragment extends Fragment  {
         btnWashCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                customDialog(mOrderPrice.getText().toString());
+                if(mOrderPrice.getText().toString().equals("")){
+                    Toast.makeText(getActivity(),"请先扫码！！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                customDialog1(mOrderPrice.getText().toString());
+            }
+        });
+
+        btnPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOrderPrice.getText().toString().equals("")){
+                    Toast.makeText(getActivity(),"请先扫码！！",Toast.LENGTH_SHORT).show();
+                    return;
+                }customDialog2(mOrderPrice.getText().toString());
             }
         });
     }
@@ -138,8 +157,8 @@ public class IndexFragment extends Fragment  {
     }
 
 
-    private void customDialog(String price) {
-        String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认提交？", price);
+    private void customDialog1(String price) {
+        String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认开单？", price);
         final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
         View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
@@ -174,14 +193,48 @@ public class IndexFragment extends Fragment  {
         dialog.show();
     }
 
-
+    private void customDialog2(String price) {
+        String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认结算？", price);
+        final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
+        View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
+        TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
+        TextView cancel = (TextView) view.findViewById(R.id.cancel);
+        TextView confirm = (TextView) view.findViewById(R.id.confirm);
+        dialog_content.setText(Html.fromHtml(title));
+        dialog.setContentView(view);
+        //使得点击对话框外部不消失对话框
+        dialog.setCanceledOnTouchOutside(false);
+        //设置对话框的大小
+        view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(getActivity()).getScreenHeight() * 0.23f));
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = (int) (ScreenSizeUtils.getInstance(getActivity()).getScreenWidth() * 0.75f);
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.CENTER;
+        dialogWindow.setAttributes(lp);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //订单的价格需要谨慎处理  需考虑到各种突发情况
+                openPayForMemberRequest();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
     public void changeButtonState(){
         Button button =  (Button)view.findViewById(R.id.btn_washCard);
         button.setText("已开单");
         button.setTextColor(getResources().getColor(R.color.darkslategray));
         button.setEnabled(false);
     }
-
+    CustomerInfoBean customerInfoBean;
     // 检查qrcode接口.
     private void InItRequest(String qrcode) {
         Map<String, Object> resMap = new HashMap<String, Object>();
@@ -194,7 +247,6 @@ public class IndexFragment extends Fragment  {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
                 Gson gson = new Gson();
-                CustomerInfoBean customerInfoBean;
                 customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
                 CustomerInfoBean.Data data = customerInfoBean.getData();
                 Message message = new Message();
@@ -210,7 +262,7 @@ public class IndexFragment extends Fragment  {
     private void openBillForMemberRequest() {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("sessionId", "54ec105bd3fc4106ad8d4ab45b6addf7");
-        resMap.put("SETTLEMENTID", "1");
+        resMap.put("SETTLEMENTID", customerInfoBean.getData().getId());
         resMap.put("PRICE", "0.0");
         resMap.put("sqlType", "proc");
         resMap.put("PROID", "900.0");
@@ -226,7 +278,7 @@ public class IndexFragment extends Fragment  {
                     changeButtonState();
                     Toast.makeText(getActivity(),"洗车开单成功!",Toast.LENGTH_SHORT).show();
                 }else if(data.getOCODE().equals("99")){
-                    Toast.makeText(getActivity(),"失败了，存在未结算的洗车单",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"您不要重复开单！"+data.getOCODE(),Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getActivity(),"未知错误",Toast.LENGTH_SHORT).show();
                 }
@@ -235,5 +287,24 @@ public class IndexFragment extends Fragment  {
         mServiceHelp.start(resMap,getActivity());
     }
 
+
+    //会员结算请求
+    private void openPayForMemberRequest() {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sessionId", "d86bd28a13a248cf9cf23ac04dfd2818");
+        resMap.put("sqlKey", "CP_SETTLEMENT_XICHE_ORDER");
+        resMap.put("settlementWay", 0);
+        resMap.put("bcid", 1.0);
+        resMap.put("sqlType", "proc");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,true,"2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+               // Gson gson = new Gson();
+                Log.i("pppppppp",json+" ");
+            }
+        });
+        mServiceHelp.start(resMap,getActivity());
+    }
 
 }
