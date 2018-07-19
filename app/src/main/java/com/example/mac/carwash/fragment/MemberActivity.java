@@ -15,10 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.main.adapter.AllSettledFragment;
-import com.example.mac.carwash.main.adapter.AlreSettledFragment;
+import com.example.mac.carwash.main.adapter.AllOrderFragment;
+import com.example.mac.carwash.main.adapter.AlrePaidFragment;
 import com.example.mac.carwash.main.adapter.FragmentAdapter;
-import com.example.mac.carwash.main.adapter.UnsettledFragment;
+import com.example.mac.carwash.main.adapter.UnPaidFragment;
 import com.example.mac.carwash.view.CustomViewpagerView;
 
 import java.util.ArrayList;
@@ -47,9 +47,9 @@ public class MemberActivity extends FragmentActivity {
     /**
      * Fragment
      */
-    private AllSettledFragment mAllSettledFragment;
-    private UnsettledFragment mUnsettledFragment;
-    private AlreSettledFragment mAlreSettledFragment;
+    private AllOrderFragment mAllOrderFragment;
+    private UnPaidFragment mUnPaidFragment;
+    private AlrePaidFragment mAlrePaidFragment;
     /**
      * ViewPager的当前选中页
      */
@@ -80,12 +80,12 @@ public class MemberActivity extends FragmentActivity {
     }
 
     private void init() {
-        mUnsettledFragment = new UnsettledFragment();
-        mAlreSettledFragment = new AlreSettledFragment();
-        mAllSettledFragment = new AllSettledFragment();
-        mFragmentList.add(mAllSettledFragment);
-        mFragmentList.add(mUnsettledFragment);
-        mFragmentList.add(mAlreSettledFragment);
+        mUnPaidFragment = new UnPaidFragment();
+        mAlrePaidFragment = new AlrePaidFragment();
+        mAllOrderFragment = new AllOrderFragment();
+        mFragmentList.add(mAllOrderFragment);
+        mFragmentList.add(mUnPaidFragment);
+        mFragmentList.add(mAlrePaidFragment);
 
         mFragmentAdapter = new FragmentAdapter(
                 this.getSupportFragmentManager(), mFragmentList);

@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,18 +27,23 @@ import android.widget.Toast;
 
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
+import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
 import com.example.mac.carwash.main.order.OrderAdapter;
-import com.example.mac.carwash.main.order.OrderBean;
+import com.example.mac.carwash.jsonBean.OrderInfoBean;
 import com.example.mac.carwash.util.JsonUtils;
 import com.example.mac.carwash.util.LicenseKeyboardUtil;
 import com.example.mac.carwash.util.ScreenSizeUtils;
 import com.example.mac.carwash.view.RecycleViewDivider;
+import com.example.mac.carwash.webservice.PubData;
+import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mac on 2018/7/9.
@@ -177,7 +183,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    private void customDialog(String carNum,int price) {
+    private void customDialog(final String carNum, int price) {
         String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n确认提交？", carNum,price);
         final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
         View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
@@ -206,7 +212,8 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity,"提交成功",Toast.LENGTH_SHORT).show();
+                openBillByCarNumRequest(carNum.substring(0,1),carNum.substring(1,carNum.length()));
+               // Toast.makeText(activity,"提交成功",Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
@@ -218,11 +225,13 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 
 
 
-    public List<OrderBean.Data> initOrderBean(){
-        List<OrderBean.Data> dataList;
-        String result = JsonUtils.getJson(getContext(), "member.json");
+    public List<OrderInfoBean.Data> initOrderBean(){
         Gson gson = new Gson();
-        dataList = gson.fromJson(result, List.class);
+        OrderInfoBean orderInfoBean;
+        List<OrderInfoBean.Data> dataList;
+        String result = JsonUtils.getJson(getContext(), "member.json");
+        orderInfoBean = gson.fromJson(result, OrderInfoBean.class);
+        dataList = orderInfoBean.getData();
         return dataList;
     }
 
@@ -233,5 +242,35 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
             activity.unregisterReceiver(receiver);
             mReceiverTag=false;
         }
+    }
+
+
+
+    //
+    private void openBillByCarNumRequest(String province,String carmark) {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sessionId", "d86bd28a13a248cf9cf23ac04dfd2818");
+        resMap.put("province",  province);
+        resMap.put("sqlKey", "CP_ADD_XICHE_ORDERV2");
+        resMap.put("carmark", carmark);
+        resMap.put("sqlType", "proc");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,true,"2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+                Log.i("uuu非会员录入车牌信息洗车开单回调：",""+json);
+				Gson gson = new Gson();
+				OpenBillInfoBean openBillInfoBean = gson.fromJson(json, OpenBillInfoBean.class);
+				OpenBillInfoBean.Data data = openBillInfoBean.getData();
+				if( data.getOCODE().equals("00")){
+					Toast.makeText(getActivity(),"洗车开单成功!",Toast.LENGTH_SHORT).show();
+				}else if(data.getOCODE().equals("99")){
+					Toast.makeText(getActivity(),"失败了，存在未结算的洗车单",Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(getActivity(),"未知错误",Toast.LENGTH_SHORT).show();
+				}
+            }
+        });
+        mServiceHelp.start(resMap,getActivity());
     }
 }

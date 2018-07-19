@@ -49,8 +49,7 @@ public class IndexFragment extends Fragment  {
     private Button btnWashCar;
     BaseActivity activity;
     private Spinner spinner;
-
-
+    private TextView mOrderPrice;
     public static IndexFragment newInstance() {
         IndexFragment fragment = new IndexFragment();
         return fragment;
@@ -64,6 +63,7 @@ public class IndexFragment extends Fragment  {
     }
 
     public void initView(){
+        mOrderPrice = (TextView)view.findViewById(R.id.tv_info_order_price);
         spinner = (Spinner) view.findViewById(R.id.spinner_select_store);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
                 .createFromResource(activity, R.array.select_store,
@@ -85,7 +85,7 @@ public class IndexFragment extends Fragment  {
         btnWashCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                customDialog("36");
+                customDialog(mOrderPrice.getText().toString());
             }
         });
     }
@@ -166,7 +166,8 @@ public class IndexFragment extends Fragment  {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBillRequest();
+                //订单的价格需要谨慎处理  需考虑到各种突发情况
+                openBillForMemberRequest();
                 dialog.dismiss();
             }
         });
@@ -192,11 +193,6 @@ public class IndexFragment extends Fragment  {
         mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
-                //通知UI 关闭结束等待中的Dialog
-//                Message message = new Message();
-//                message.what=111;mHandler.sendMessage(message);
-                //      mHandler.sendEmptyMessageDelayed(111, 2000);
-                //测试json：jsonStr server：json
                 Gson gson = new Gson();
                 CustomerInfoBean customerInfoBean;
                 customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
@@ -205,14 +201,13 @@ public class IndexFragment extends Fragment  {
                 message.what=111;message.obj = data;
                 BaseActivity baseActivity = (BaseActivity) getActivity();
                 baseActivity.handler.sendMessage(message);
-              //  Log.i("mmmmmmmmmmmmmm","  "+json);
             }
         });
         mServiceHelp.start(resMap,getActivity());
     }
 
-    //开单请求
-    private void openBillRequest() {
+    //会员开单请求
+    private void openBillForMemberRequest() {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("sessionId", "54ec105bd3fc4106ad8d4ab45b6addf7");
         resMap.put("SETTLEMENTID", "1");
@@ -220,7 +215,7 @@ public class IndexFragment extends Fragment  {
         resMap.put("sqlType", "proc");
         resMap.put("PROID", "900.0");
         resMap.put("sqlKey",  "CP_ADD_XICHE_ORDER");
-        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,false,"2");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,true,"2");
         mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {

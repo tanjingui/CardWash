@@ -1,11 +1,10 @@
-package com.example.mac.carwash.main.order;
+package com.example.mac.carwash.jsonBean;
 import java.util.List;
 
-public class OrderBean {
+public class OrderInfoBean {
     private String code;
     private List<Data> data;
-    private Page page;
-    private String msg;
+    private String page;
     public void setCode(String code) {
         this.code = code;
     }
@@ -20,41 +19,24 @@ public class OrderBean {
         return data;
     }
 
-    public void setPage(Page page) {
+    public void setPage(String page) {
         this.page = page;
     }
-    public Page getPage() {
+    public String getPage() {
         return page;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-    public String getMsg() {
-        return msg;
-    }
+    public class Data {
 
-    public static class Data {
         private String head;
         private String fee;
         private String carmark;
-        private String ISSETTLEMENT;
+        private int ISSETTLEMENT;
         private String NAME;
         private String vip;
         private String TIME;
-        private String id;
-
-        public  Data(String head, String fee, String carmark, String ISSETTLEMENT, String NAME, String vip, String TIME, String id) {
-            this.head = head;
-            this.fee = fee;
-            this.carmark = carmark;
-            this.ISSETTLEMENT = ISSETTLEMENT;
-            this.NAME = NAME;
-            this.vip = vip;
-            this.TIME = TIME;
-            this.id = id;
-        }
-
+        private int id;
+        private int rownum_;
         public void setHead(String head) {
             this.head = head;
         }
@@ -76,10 +58,10 @@ public class OrderBean {
             return carmark;
         }
 
-        public void setISSETTLEMENT(String ISSETTLEMENT) {
+        public void setISSETTLEMENT(int ISSETTLEMENT) {
             this.ISSETTLEMENT = ISSETTLEMENT;
         }
-        public String getISSETTLEMENT() {
+        public int getISSETTLEMENT() {
             return ISSETTLEMENT;
         }
 
@@ -104,31 +86,18 @@ public class OrderBean {
             return TIME;
         }
 
-        public void setId(String id) {
+        public void setId(int id) {
             this.id = id;
         }
-        public String getId() {
+        public int getId() {
             return id;
         }
 
-    }
-
-    public class Page {
-
-        private String currentPage;
-        private String pageRecordCount;
-        public void setCurrentPage(String currentPage) {
-            this.currentPage = currentPage;
+        public void setRownum_(int rownum_) {
+            this.rownum_ = rownum_;
         }
-        public String getCurrentPage() {
-            return currentPage;
-        }
-
-        public void setPageRecordCount(String pageRecordCount) {
-            this.pageRecordCount = pageRecordCount;
-        }
-        public String getPageRecordCount() {
-            return pageRecordCount;
+        public int getRownum_() {
+            return rownum_;
         }
 
     }

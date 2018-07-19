@@ -2,18 +2,17 @@ package com.example.mac.carwash.main.order;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.main.order.OrderBean.Data;
+import com.example.mac.carwash.jsonBean.OrderInfoBean;
+import com.example.mac.carwash.jsonBean.OrderInfoBean.Data;
 
 import java.util.List;
 /**
@@ -39,11 +38,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         //设置textView显示内容为list里的对应项
-        Log.i("ttttttt",mDataList.size()+"");
         Data data = mDataList.get(position);
         holder.orderTime.setText(String.format(context.getResources().getString(R.string.user_order_time), data.getTIME()));
-        holder.orderState.setText(data.getISSETTLEMENT());
-        holder.orderNum.setText(String.format(context.getResources().getString(R.string.order_num), data.getId()));
+        holder.orderState.setText(data.getISSETTLEMENT()+"");
+        holder.orderNum.setText(String.format(context.getResources().getString(R.string.order_num), data.getId()+""));
         holder.orderFee.setText(String.format(context.getResources().getString(R.string.user_wash_fee), data.getFee()));
         holder.userName.setText(String.format(context.getResources().getString(R.string.user_name), data.getNAME()));
         holder.userLevel.setText(data.getVip());
@@ -92,7 +90,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
     /*之下的方法都是为了方便操作，并不是必须的*/
 
     //在指定位置插入，原位置的向后移动一格
-    public boolean addItem(int position, OrderBean.Data data) {
+    public boolean addItem(int position, OrderInfoBean.Data data) {
         if (position < mDataList.size() && position >= 0) {
             mDataList.add(position, data);
             notifyItemInserted(position);

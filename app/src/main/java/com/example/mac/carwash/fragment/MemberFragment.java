@@ -16,10 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.main.adapter.AllSettledFragment;
-import com.example.mac.carwash.main.adapter.AlreSettledFragment;
+import com.example.mac.carwash.main.adapter.AllOrderFragment;
+import com.example.mac.carwash.main.adapter.AlrePaidFragment;
 import com.example.mac.carwash.main.adapter.FragmentAdapter;
-import com.example.mac.carwash.main.adapter.UnsettledFragment;
+import com.example.mac.carwash.main.adapter.UnPaidFragment;
 import com.example.mac.carwash.main.search.SearchFragment;
 
 import java.util.ArrayList;
@@ -59,9 +59,9 @@ public class MemberFragment extends Fragment {
     /**
      * Fragment
      */
-    private AllSettledFragment mChatFg;
-    private UnsettledFragment mFriendFg;
-    private AlreSettledFragment mContactsFg;
+    private AllOrderFragment mChatFg;
+    private UnPaidFragment mFriendFg;
+    private AlrePaidFragment mContactsFg;
     /**
      * ViewPager的当前选中页
      */
@@ -99,9 +99,9 @@ public class MemberFragment extends Fragment {
                 replaceFragment(SearchFragment.newInstance(getContext()));
             }
         });
-        mFriendFg = new UnsettledFragment();
-        mContactsFg = new AlreSettledFragment();
-        mChatFg = new AllSettledFragment();
+        mFriendFg = new UnPaidFragment();
+        mContactsFg = new AlrePaidFragment();
+        mChatFg = new AllOrderFragment();
         mFragmentList.add(mChatFg);
         mFragmentList.add(mFriendFg);
         mFragmentList.add(mContactsFg);

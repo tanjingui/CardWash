@@ -10,15 +10,17 @@ import android.view.ViewGroup;
 
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.main.order.OrderAdapter;
-import com.example.mac.carwash.main.order.OrderBean.Data;
+import com.example.mac.carwash.jsonBean.OrderInfoBean;
+import com.example.mac.carwash.util.JsonUtils;
 import com.example.mac.carwash.view.RecycleViewDivider;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.List;
 
-public class AllSettledFragment extends Fragment {
+public class UnPaidFragment extends Fragment {
 
 	private View view;
 	private RecyclerView mRecyclerView;
@@ -52,24 +54,32 @@ public class AllSettledFragment extends Fragment {
 		});
 
 		//加载更多
-		 mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-		 @Override
-		 public void onLoadmore(RefreshLayout refreshlayout) {
+		mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+			@Override
+			public void onLoadmore(RefreshLayout refreshlayout) {
 //		 for(int i=0;i<30;i++){ mData.add("小明"+i); }
 //		 mNameAdapter.notifyDataSetChanged();
-		 refreshlayout.finishLoadmore();
-		 } });
-	}
-
-	public List<Data> initOrderBean(){
-//		List<Data> dataList;
-//		String result = JsonUtils.getJson(getContext(), "member.json");
-//		Gson gson = new Gson();
-//		dataList = gson.fromJson(result, List.class);
-//		Log.i("iiiiiiiiii",dataList.toString());
-		return null;
+				refreshlayout.finishLoadmore();
+			} });
 	}
 
 
 
+
+
+
+
+
+
+
+
+	public List<OrderInfoBean.Data> initOrderBean(){
+		Gson gson = new Gson();
+		OrderInfoBean orderInfoBean;
+		List<OrderInfoBean.Data> dataList;
+		String result = JsonUtils.getJson(getContext(), "member.json");
+		orderInfoBean = gson.fromJson(result, OrderInfoBean.class);
+		dataList = orderInfoBean.getData();
+		return dataList;
+	}
 }

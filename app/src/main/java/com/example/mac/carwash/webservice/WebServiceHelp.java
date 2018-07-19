@@ -154,6 +154,7 @@ public class WebServiceHelp {
         String USER_ID = (String) PreferencesUtil.get(mContext, InterfaceDefinition.PreferencesUser.USER_ID,"");
         data.put("USER_ID", USER_ID);
         this.json = JsonUtil.toJson(data);
+        Log.i("uuu请求服务器的信息：：：",json+"");
         Log.e("传参====",json);
         initDialogShow();
         new Thread(new getServiceInfo()).start();

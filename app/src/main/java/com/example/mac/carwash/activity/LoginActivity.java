@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_login);
         mWeiboDialog = WeiboDialogUtils.createLoadingDialog(LoginActivity.this, "加载中...");
-          InItRequest();
+        InItRequest();
         //离线下模拟
         //  new UpdateManager(this,this).resolveUpdateInfo(jsonStr);
         initView();
@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //通知UI 关闭结束等待中的Dialog
                 Message message = new Message();
                 message.what=111;mHandler.sendMessage(message);
-         //      mHandler.sendEmptyMessageDelayed(111, 2000);
+                //      mHandler.sendEmptyMessageDelayed(111, 2000);
                 //测试json：jsonStr server：json
                 JSONObject obj = JsonUtil.toJsonObject(json);
                 String code = obj.optString("code");

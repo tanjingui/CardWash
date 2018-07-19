@@ -13,7 +13,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,26 +29,21 @@ import com.example.mac.carwash.fragment.MemberFragment;
 import com.example.mac.carwash.fragment.NonMemberFragment;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
 import com.example.mac.carwash.view.BottomPopupOption;
-import com.example.mac.carwash.webservice.PubData;
-import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by mac on 2018/7/9.
  */
 
-public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomPopupOption.onPopupWindowItemClickListener,getDataInterface {
-    private BottomNavigationBar mBottomNavigationBar;
-    private FragmentManager mFragmentManager;
-    private FragmentTransaction transaction;
-    private BadgeItem badgeItem;
-    private DrawerLayout drawer;
-    private BottomPopupOption bottomPopupOption;
-    //侧滑的实现
-    private NavigationView navigationView;
+    public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomPopupOption.onPopupWindowItemClickListener,getDataInterface {
+        private BottomNavigationBar mBottomNavigationBar;
+        private FragmentManager mFragmentManager;
+        private FragmentTransaction transaction;
+        private BadgeItem badgeItem;
+        private DrawerLayout drawer;
+        private BottomPopupOption bottomPopupOption;
+        //侧滑的实现
+        private NavigationView navigationView;
     private boolean isDrawer=false; //判断drawer是否被划出
     public Handler handler = new Handler() {
         @Override
@@ -65,7 +59,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
                     tv_orderPrice = (TextView)indexFragment.getView().findViewById(R.id.tv_info_order_price);
                     tv_banl = (TextView)indexFragment.getView().findViewById(R.id.tv_info_banlance);
                     tv_amt = (TextView)indexFragment.getView().findViewById(R.id.tv_info_remain);
-                    Log.i("8888888",""+data.getOwner()+data.getOTYPE()+data.getOCARMARK()+data.getOFEE()+data.getOBALANCE()+data.getDiscount());
+                    //Log.i("8888888",""+data.getOwner()+data.getOTYPE()+data.getOCARMARK()+data.getOFEE()+data.getOBALANCE()+data.getDiscount());
                     tv_name.setText(data.getOwner());tv_level.setText(data.getOTYPE());tv_carNum.setText(data.getOCARMARK());tv_orderPrice.setText(data.getOFEE()+"");tv_banl.setText(data.getOBALANCE()+"");tv_amt.setText(data.getDiscount()+"");
                     break;
                 default:
@@ -229,16 +223,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                return false;//拦截事件
-            default:
-                break;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+
     @Override
     public void callbackResult(String result) {
         //对扫完二维码请求服务器返回的用户信息result，进行呈现 ，更新UI
@@ -253,33 +238,53 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-  //请求洗车用户的信息
-    private void InItRequest(String qrcode) {
-        Map<String, Object> resMap = new HashMap<String, Object>();
-        resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
-        resMap.put("qrcode", qrcode);
-        resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
-        resMap.put("sqlType", "sql");
-        WebServiceHelp mServiceHelp = new WebServiceHelp(this,"iPadService.asmx", "loadData", PubData.class,false,"2");
-        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
-            @Override
-            public void onServiceCallBackString(boolean haveCallBack, String json) {
-                //通知UI 关闭结束等待中的Dialog
-//                Message message = new Message();
-//                message.what=111;mHandler.sendMessage(message);
-                //      mHandler.sendEmptyMessageDelayed(111, 2000);
-                //测试json：jsonStr server：json
-                Gson gson = new Gson();
-                CustomerInfoBean customerInfoBean;
-                customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
-                CustomerInfoBean.Data data = customerInfoBean.getData();
-                Message message = new Message();
-                message.what=111;message.obj = data;
-                handler.sendMessage(message);
-                Log.i("mmmmmmmmmmmmmm","  "+json);
-            }
-        });
-        mServiceHelp.start(resMap,this);
+
+
+
+
+
+
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                return false;//拦截事件
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
+
+//  //请求洗车用户的信息
+//    private void InItRequest(String qrcode) {
+//        Map<String, Object> resMap = new HashMap<String, Object>();
+//        resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
+//        resMap.put("qrcode", qrcode);
+//        resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
+//        resMap.put("sqlType", "sql");
+//        WebServiceHelp mServiceHelp = new WebServiceHelp(this,"iPadService.asmx", "loadData", PubData.class,false,"2");
+//        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+//            @Override
+//            public void onServiceCallBackString(boolean haveCallBack, String json) {
+//                //通知UI 关闭结束等待中的Dialog
+////                Message message = new Message();
+////                message.what=111;mHandler.sendMessage(message);
+//                //      mHandler.sendEmptyMessageDelayed(111, 2000);
+//                //测试json：jsonStr server：json
+//                Gson gson = new Gson();
+//                CustomerInfoBean customerInfoBean;
+//                customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
+//                CustomerInfoBean.Data data = customerInfoBean.getData();
+//                Message message = new Message();
+//                message.what=111;message.obj = data;
+//                handler.sendMessage(message);
+//                Log.i("mmmmmmmmmmmmmm","  "+json);
+//            }
+//        });
+//        mServiceHelp.start(resMap,this);
+//    }
 
 }
