@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +30,7 @@ import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.activity.CaptureActivity;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
+import com.example.mac.carwash.jsonBean.PayResponseBean;
 import com.example.mac.carwash.util.Constant;
 import com.example.mac.carwash.util.ScreenSizeUtils;
 import com.example.mac.carwash.webservice.PubData;
@@ -235,10 +235,43 @@ public class IndexFragment extends Fragment  {
         button.setEnabled(false);
     }
     CustomerInfoBean customerInfoBean;
-    // 检查qrcode接口.
+
+
+
+
+    //检查是否有id信息
+    public Boolean checkState() {
+        if (customerInfoBean.getData().getId() == 0) {
+            Toast.makeText(getActivity(),"没获取到顾客id，先扫码获取！",Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     /*-----------------------------------------传入qrcode，请求顾客信息--------------------------------------------------*/
     private void InItRequest(String qrcode) {
         Map<String, Object> resMap = new HashMap<String, Object>();
-        resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
+        //resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
         resMap.put("qrcode", qrcode);
         resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
         resMap.put("sqlType", "sql");
@@ -246,6 +279,7 @@ public class IndexFragment extends Fragment  {
         mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
+                //这里需判断是否是有效的二维码，如果server回应不能识别，应拒return，避免出错
                 Gson gson = new Gson();
                 customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
                 CustomerInfoBean.Data data = customerInfoBean.getData();
@@ -258,11 +292,14 @@ public class IndexFragment extends Fragment  {
         mServiceHelp.start(resMap,getActivity());
     }
 
-    //会员开单请求
+
+
+    /*-----------------------------会员开单请求--------------------------------------------------*/
     private void openBillForMemberRequest() {
-        Map<String, Object> resMap = new HashMap<String, Object>();
-        resMap.put("sessionId", "54ec105bd3fc4106ad8d4ab45b6addf7");
-        resMap.put("SETTLEMENTID", customerInfoBean.getData().getId());
+        if(!checkState()) return;
+        Map<String, Object> resMap = new HashMap<>();
+        //resMap.put("sessionId", "54ec105bd3fc4106ad8d4ab45b6addf7");
+        resMap.put("SETTLEMENTID", customerInfoBean.getData().getId()); //结算的id  这个是用户id
         resMap.put("PRICE", "0.0");
         resMap.put("sqlType", "proc");
         resMap.put("PROID", "900.0");
@@ -288,20 +325,30 @@ public class IndexFragment extends Fragment  {
     }
 
 
-    //会员结算请求
+    /*-----------------------------------------会员结算请求--------------------------------------------------*/
     private void openPayForMemberRequest() {
+        if(!checkState()) return;
         Map<String, Object> resMap = new HashMap<String, Object>();
-        resMap.put("sessionId", "d86bd28a13a248cf9cf23ac04dfd2818");
+        //resMap.put("sessionId", "d86bd28a13a248cf9cf23ac04dfd2818");
         resMap.put("sqlKey", "CP_SETTLEMENT_XICHE_ORDER");
         resMap.put("settlementWay", 0);
-        resMap.put("bcid", 1.0);
+        resMap.put("bcid",customerInfoBean.getData().getId());
         resMap.put("sqlType", "proc");
         WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,true,"2");
         mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
-               // Gson gson = new Gson();
-                Log.i("pppppppp",json+" ");
+                Gson gson = new Gson();
+                PayResponseBean payResponseBean = gson.fromJson(json, PayResponseBean.class);
+                String code = payResponseBean.getCode();
+                if (code.equals("99")) {
+                    Toast.makeText(getActivity(), "重复结算！", Toast.LENGTH_SHORT).show();
+                } else if(code.equals("00")){
+                    Toast.makeText(getActivity(), "结算成功！", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getActivity(), "结算失败，未知错误！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
         });
         mServiceHelp.start(resMap,getActivity());

@@ -2,6 +2,15 @@
 <resources>
     <!--标题栏样式-->
     <declare-styleable name="CustomToolBar">
+
+        <!--自定义spinner是否可见|内容-->
+        <attr name="left_spi_visible" format="boolean"/>
+        <!--门店的选择  这个不好做，先放在这 用别的方法-->
+        <!--<attr name="left_spi_value">-->
+            <!--<enum name="中心店" value="0" />-->
+            <!--<enum name="城区店" value="1" />-->
+        <!--</attr>-->
+
         <!--左按钮是否可见|背景-->
         <attr name="left_btn_visible" format="boolean"/>
         <attr name="left_btn_text" format="string"/>

@@ -7,7 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.example.mac.carwash.R;
 
 /**
@@ -15,6 +17,10 @@ import com.example.mac.carwash.R;
  */
 
 public class CustomToolBar extends LinearLayout{
+
+    private Boolean isLeftSpinnerVisible;
+    private enum leftSpinnerContent{};   //门店的选择项
+    private int leftSpinnerId;
 
     private Boolean isLeftBtnVisible;
     private String leftBtnText;
@@ -54,6 +60,10 @@ public class CustomToolBar extends LinearLayout{
      */
     public void initView(AttributeSet attrs){
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CustomToolBar) ;
+        /**-------------获取左边spinner属性------------*/
+        isLeftSpinnerVisible = typedArray.getBoolean(R.styleable.CustomToolBar_left_spi_visible, false);
+
+
         /**-------------获取左边按钮属性------------*/
         isLeftBtnVisible = typedArray.getBoolean(R.styleable.CustomToolBar_left_btn_visible, false);
         if(typedArray.hasValue(R.styleable.CustomToolBar_left_btn_text)){
@@ -88,6 +98,7 @@ public class CustomToolBar extends LinearLayout{
 
         /**-------------设置内容------------*/
         View barLayoutView = View.inflate(getContext(), R.layout.layout_basebar, null);
+        Spinner leftSpinner = (Spinner) barLayoutView.findViewById(R.id.toolbar_spinner_select_store);
         Button leftBtn = (Button)barLayoutView.findViewById(R.id.toolbar_left_btn);
         TextView leftTv = (TextView)barLayoutView.findViewById(R.id.toolbar_left_tv);
         TextView titleTv = (TextView)barLayoutView.findViewById(R.id.toolbar_title_tv);
@@ -112,9 +123,14 @@ public class CustomToolBar extends LinearLayout{
         if(isTitleVisible){
             titleTv.setVisibility(VISIBLE);
         }
+        if(isLeftSpinnerVisible){
+            leftSpinner.setVisibility(VISIBLE);
+        }
         leftTv.setText(leftTvText);
         rightTv.setText(rightTvText);
         titleTv.setText(titleText);
+        //数据直接从UserInfoState中获取
+       // leftSpinner.setAdapter();
 
         if(leftResId != -1){
             leftBtn.setBackgroundResource(leftResId);

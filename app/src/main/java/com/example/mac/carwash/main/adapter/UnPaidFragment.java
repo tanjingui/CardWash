@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.jsonBean.MemberWarshCarRecordsInfo;
 import com.example.mac.carwash.main.order.MemberOrderAdapter;
@@ -19,7 +18,6 @@ import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +29,7 @@ public class UnPaidFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
-		view = inflater.inflate(R.layout.temp_tab_chat3, container,false);
+		view = inflater.inflate(R.layout.viewpaper_tab3, container,false);
 		init();
 		return view;
 	}
@@ -84,8 +82,8 @@ public class UnPaidFragment extends Fragment {
 //		dataList = orderInfoBean.getData();
 //		return dataList;
 //	}
-
    Boolean flag = true;
+	MemberOrderAdapter mMemberOrderAdapter;
 	private void queryTodayAllMemberWarshCarRecords() {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		resMap.put("sessionId", "6a874b1f630b4785a83f30052952e17e");
@@ -99,8 +97,8 @@ public class UnPaidFragment extends Fragment {
 				Gson gson = new Gson();
 				MemberWarshCarRecordsInfo memberWarshCarRecordsInfo = gson.fromJson(json, MemberWarshCarRecordsInfo.class);
 				//将server传来的数据 适配recyclerView
-				MemberOrderAdapter adapter = new MemberOrderAdapter(memberWarshCarRecordsInfo.getData(),getContext());
-				mRecyclerView.setAdapter(adapter);
+				mMemberOrderAdapter = new MemberOrderAdapter(memberWarshCarRecordsInfo.getData(),getContext());
+				mRecyclerView.setAdapter(mMemberOrderAdapter);
 				mRecyclerView.addItemDecoration(new RecycleViewDivider(
 						view.getContext(), LinearLayoutManager.VERTICAL, 12, getResources().getColor(R.color.black)));
 				if(flag==false){  //服务器已经完成数据更新 可以取消上拉刷新等待动画

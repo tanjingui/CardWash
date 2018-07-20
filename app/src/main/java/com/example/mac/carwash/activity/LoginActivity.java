@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this,""+stateName,Toast.LENGTH_SHORT).show();
                         }
                     }
-                },mUsername.getText().toString(),mPassword.getText().toString(),LoginActivity.this,"1", mServiceHelp);
+                },"sx001","1996tjg",LoginActivity.this,"1", mServiceHelp);
                 loginUtil.startLogin(true);
 
             }
