@@ -18,15 +18,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
+import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
 import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo;
 import com.example.mac.carwash.main.order.UnMemberOrderAdapter;
@@ -55,6 +59,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     private RecyclerView mRecyclerView;
     private RefreshLayout mRefreshLayout;
     private LinearLayout linearLayout;
+    private Spinner spinner;
     private EditText inputbox1,inputbox2,
             inputbox3,inputbox4,
             inputbox5,inputbox6,inputbox7;
@@ -79,7 +84,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
     public void init(){
-
+        spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
         activity=(BaseActivity) getActivity();
         linearLayout = (LinearLayout) view.findViewById(R.id.linear_unMember_info);
         mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
@@ -125,6 +130,27 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         finishFilter = new IntentFilter(INPUT_LICENSE_COMPLETE);
         activity.registerReceiver(receiver, finishFilter);
         mReceiverTag = true;
+
+        //初始化spinner控件
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, UserInfoState.getStorenameList());
+        adapter.setDropDownViewResource(android.
+                R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(UserInfoState.getSelectStoreIndex());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                UserInfoState.setSelectStoreIndex(position);
+                UserInfoState.setSelectStoreCode(UserInfoState.getStorecodeList().get(position));
+                //设置显示当前选择的项
+                parent.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     //当键盘输入完毕时候，activity接收到键盘输入的所有内容，则此次广播结束

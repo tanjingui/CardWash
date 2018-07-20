@@ -19,8 +19,6 @@ import com.example.mac.carwash.R;
 public class CustomToolBar extends LinearLayout{
 
     private Boolean isLeftSpinnerVisible;
-    private enum leftSpinnerContent{};   //门店的选择项
-    private int leftSpinnerId;
 
     private Boolean isLeftBtnVisible;
     private String leftBtnText;
@@ -129,8 +127,6 @@ public class CustomToolBar extends LinearLayout{
         leftTv.setText(leftTvText);
         rightTv.setText(rightTvText);
         titleTv.setText(titleText);
-        //数据直接从UserInfoState中获取
-       // leftSpinner.setAdapter();
 
         if(leftResId != -1){
             leftBtn.setBackgroundResource(leftResId);

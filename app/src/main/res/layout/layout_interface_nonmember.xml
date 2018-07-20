@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    app:left_spi_visible="true"
     app:left_tv_visible="false"
     app:right_btn_visible="true"
     app:right_btn_src="@drawable/icon_find_washrecord"

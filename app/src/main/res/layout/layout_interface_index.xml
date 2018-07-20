@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    app:left_spi_visible="true"
     app:left_tv_visible="false"
     app:right_btn_visible="true"
     app:right_btn_src="@drawable/qr_code"
@@ -185,34 +186,6 @@
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_margin="6dp"
-                android:layout_weight="0.3"
-                android:gravity="right|center"
-                android:textSize="15sp"
-                android:text="门店选择:" />
-
-            <Spinner
-                android:id="@+id/spinner_select_store"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="6dp"
-                android:layout_weight="0.7"
-                android:gravity="left"
-                android:textSize="15sp" />
-
-
-        </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="fill_parent"

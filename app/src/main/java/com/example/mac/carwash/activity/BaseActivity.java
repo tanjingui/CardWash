@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -31,8 +30,16 @@ import com.example.mac.carwash.fragment.IndexFragment;
 import com.example.mac.carwash.fragment.MemberFragment;
 import com.example.mac.carwash.fragment.NonMemberFragment;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
+import com.example.mac.carwash.jsonBean.StoreInfoBean;
 import com.example.mac.carwash.view.BottomPopupOption;
+import com.example.mac.carwash.webservice.PubDataList;
+import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,7 +48,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
     public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomPopupOption.onPopupWindowItemClickListener,getDataInterface {
-        private BottomNavigationBar mBottomNavigationBar;
+        private BottomNavigationBar mBottomNavigationBar;  //底部导航栏
         private FragmentManager mFragmentManager;
         private FragmentTransaction transaction;
         private BadgeItem badgeItem;
@@ -64,7 +71,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
                     tv_orderPrice = (TextView)indexFragment.getView().findViewById(R.id.tv_info_order_price);
                     tv_banl = (TextView)indexFragment.getView().findViewById(R.id.tv_info_banlance);
                     tv_amt = (TextView)indexFragment.getView().findViewById(R.id.tv_info_remain);
-                    //Log.i("8888888",""+data.getOwner()+data.getOTYPE()+data.getOCARMARK()+data.getOFEE()+data.getOBALANCE()+data.getDiscount());
                     tv_name.setText(data.getOwner());tv_level.setText(data.getOTYPE());tv_carNum.setText(data.getOCARMARK());tv_orderPrice.setText(data.getOFEE()+"");tv_banl.setText(data.getOBALANCE()+"");tv_amt.setText(data.getDiscount()+"");
                     break;
                 default:
@@ -77,14 +83,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main);
-       // InItRequest();
-        initView();
-
+        initView();  //初始化layout各种控件  将得到信息填充
+        //请求门店信息， 再去初始化加载内部fragment布局 && 只请求一次
+        if(UserInfoState.getSelectStore()==-1){
+             acquireStoreInfo();}
     }
 
     public void initView(){
-        replaceFragment(new IndexFragment().newInstance(),"index");
-        //InItRequest("c1860707148c8db83bd53a73c7d9f6ca");
         mFragmentManager=getSupportFragmentManager();
         mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         mBottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);//!!!自动适应
@@ -100,8 +105,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
         mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.icon_shop_normal, "扫码洗车"))
                 .addItem(new BottomNavigationItem(R.drawable.icon_my_normal, "会员"))
                 .addItem(new BottomNavigationItem(R.drawable.icon_cart_normal, "非会员"))
-//                .addItem(new BottomNavigationItem(R.drawable.icon_my_normal, "个人信息"))
+                .setFirstSelectedPosition(1)
                 .initialise();
+
         mBottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener(){
             @Override
             public void onTabSelected(int position) {
@@ -133,7 +139,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
             }
         });
-
         //侧滑栏的实现
 
         drawer = (DrawerLayout)this.findViewById(R.id.drawer_layout);
@@ -141,7 +146,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
         CircleImageView headerView = (CircleImageView)navigationView.getHeaderView(0).findViewById(R.id.circleImage_avator);
         TextView tv1 = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_name);
         TextView tv2 = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_post);
-        tv1.setText(UserInfoState.getUSER_name()+"");
+        tv1.setText(UserInfoState.getUserName()+"");
         tv2.setText(UserInfoState.getPOSITION()+"");
         Glide.with(this)
                 .load(UserInfoState.getURL()+UserInfoState.getLOGOIMG())
@@ -253,16 +258,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
     }
 
 
-
-
-
-
-
-
-
-
-
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
@@ -274,33 +269,34 @@ import de.hdodenhof.circleimageview.CircleImageView;
         return super.onKeyDown(keyCode, event);
     }
 
-//  //请求洗车用户的信息
-//    private void InItRequest(String qrcode) {
-//        Map<String, Object> resMap = new HashMap<String, Object>();
-//        resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
-//        resMap.put("qrcode", qrcode);
-//        resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
-//        resMap.put("sqlType", "sql");
-//        WebServiceHelp mServiceHelp = new WebServiceHelp(this,"iPadService.asmx", "loadData", PubData.class,false,"2");
-//        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
-//            @Override
-//            public void onServiceCallBackString(boolean haveCallBack, String json) {
-//                //通知UI 关闭结束等待中的Dialog
-////                Message message = new Message();
-////                message.what=111;mHandler.sendMessage(message);
-//                //      mHandler.sendEmptyMessageDelayed(111, 2000);
-//                //测试json：jsonStr server：json
-//                Gson gson = new Gson();
-//                CustomerInfoBean customerInfoBean;
-//                customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
-//                CustomerInfoBean.Data data = customerInfoBean.getData();
-//                Message message = new Message();
-//                message.what=111;message.obj = data;
-//                handler.sendMessage(message);
-//                Log.i("mmmmmmmmmmmmmm","  "+json);
-//            }
-//        });
-//        mServiceHelp.start(resMap,this);
-//    }
 
+
+
+    //在一进入主界面BaseActivity就需要去 请求门店信息
+    /*-----------------------------------------传入version，请求门店信息--------------------------------------------------*/
+    private void acquireStoreInfo() {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sqlKey", "SS_CETC_shop_list");
+        resMap.put("sqlType", "sql");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(this, "iPadService.asmx", "loadDataList", PubDataList.class, false, "2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+                Gson gson = new Gson();
+                StoreInfoBean storeInfoBean;
+                List<String>deptList = new ArrayList<String>();
+                storeInfoBean = gson.fromJson(json,StoreInfoBean.class);
+                List<StoreInfoBean.Data> list = storeInfoBean.getData();
+                Iterator<StoreInfoBean.Data> iterator = list.iterator();
+                while(iterator.hasNext()){
+                    String deptName = iterator.next().getDeptName();
+                    deptList.add(deptName);
+                }
+                UserInfoState.setSTORELIST(deptList);
+                //获取到所有初始化布局的信息后，再去加载UI，填充界面 && 先显示会员订单界面
+                replaceFragment(new MemberFragment().newInstance(),"member");
+            }
+        });
+        mServiceHelp.start(resMap, this);
+    }
 }

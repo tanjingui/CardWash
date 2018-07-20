@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.activity.CaptureActivity;
+import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
 import com.example.mac.carwash.jsonBean.PayResponseBean;
@@ -65,18 +67,38 @@ public class IndexFragment extends Fragment  {
         return view;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        startQrCode();
+    }
+
     public void initView(){
         btnWashCarRecords = (Button)view.findViewById(R.id.btn_washCar_records);
         btnPay = (Button)view.findViewById(R.id.btn_pay);
         mOrderPrice = (TextView)view.findViewById(R.id.tv_info_order_price);
-        spinner = (Spinner) view.findViewById(R.id.spinner_select_store);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(activity, R.array.select_store,
-                        R.layout.spinner_self_item);
+        spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
+        //String[] mItems = new String[]{};
+        // 建立Adapter并且绑定数据源
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, UserInfoState.getStorenameList());
         adapter.setDropDownViewResource(android.
                 R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        spinner.setSelection(UserInfoState.getSelectStoreIndex());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                UserInfoState.setSelectStoreIndex(position);
+                UserInfoState.setSelectStoreCode(UserInfoState.getStorecodeList().get(position));
+                //设置显示当前选择的项
+                parent.setVisibility(View.VISIBLE);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         btnQrCode = (Button)view.findViewById(R.id.toolbar_right_btn);
         btnWashCar = (Button) view.findViewById(R.id.btn_washCard);
@@ -271,7 +293,6 @@ public class IndexFragment extends Fragment  {
      /*-----------------------------------------传入qrcode，请求顾客信息--------------------------------------------------*/
     private void InItRequest(String qrcode) {
         Map<String, Object> resMap = new HashMap<String, Object>();
-        //resMap.put("sessionId", "5269a3717f944a1c983f32b099686ddb");
         resMap.put("qrcode", qrcode);
         resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
         resMap.put("sqlType", "sql");
@@ -298,7 +319,6 @@ public class IndexFragment extends Fragment  {
     private void openBillForMemberRequest() {
         if(!checkState()) return;
         Map<String, Object> resMap = new HashMap<>();
-        //resMap.put("sessionId", "54ec105bd3fc4106ad8d4ab45b6addf7");
         resMap.put("SETTLEMENTID", customerInfoBean.getData().getId()); //结算的id  这个是用户id
         resMap.put("PRICE", "0.0");
         resMap.put("sqlType", "proc");

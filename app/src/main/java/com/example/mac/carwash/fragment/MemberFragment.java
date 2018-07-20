@@ -10,12 +10,16 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.mac.carwash.R;
+import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.main.adapter.AllOrderFragment;
 import com.example.mac.carwash.main.adapter.AlrePaidFragment;
 import com.example.mac.carwash.main.adapter.FragmentAdapter;
@@ -74,6 +78,7 @@ public class MemberFragment extends Fragment {
 
     //ToolBar
     private Button rightBtn;
+    private Spinner spinner;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.layout_interface_member, null);
@@ -90,6 +95,7 @@ public class MemberFragment extends Fragment {
         mTabFriendTv = (TextView) view.findViewById(R.id.id_friend_tv);
         mTabLineIv = (ImageView) view.findViewById(R.id.id_tab_line_iv);
         mPageVp = (ViewPager) view.findViewById(R.id.toolbar_viewPager);
+        spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
     }
 
     private void init() {
@@ -176,6 +182,26 @@ public class MemberFragment extends Fragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        // 建立Adapter并且绑定数据源
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, UserInfoState.getStorenameList());
+        adapter.setDropDownViewResource(android.
+                R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(UserInfoState.getSelectStoreIndex());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                UserInfoState.setSelectStoreIndex(position);
+                UserInfoState.setSelectStoreCode(UserInfoState.getStorecodeList().get(position));
+                //设置显示当前选择的项
+                parent.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });

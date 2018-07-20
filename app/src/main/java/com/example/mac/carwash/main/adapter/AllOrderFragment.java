@@ -103,9 +103,9 @@ public class AllOrderFragment extends Fragment {
 	MemberOrderAdapter mMemberOrderAdapter;
 	private void queryTodayAllMemberWarshCarRecords(final int currentPage, final int operation) {
 		Map<String, Object> resMap = new HashMap<>();
-		//resMap.put("sessionId", "6a874b1f630b4785a83f30052952e17e");
 		resMap.put("sqlKey",  "CS_XICHE_LIST");
-		resMap.put("state","1"); //传入需要查找订单类别   试了没用？？？？？？ //0是未结算 1是已结算 ""是全部的-------------
+        resMap.put("store","0001");
+		//resMap.put("state","1"); //传入需要查找订单类别   试了没用？？？？？？ //0是未结算 1是已结算 ""是全部的-------------
 		resMap.put("sqlType", "sql");
 		Map<String,Object>page = new HashMap<>();
 		page.put("currentPage",currentPage);  //

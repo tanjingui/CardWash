@@ -64,7 +64,7 @@ public class LoginUtil {
                 //这里我先随便解析 保存一下  改进会用到sharePerfences 等等 再考虑
                 Gson gson = new Gson();
                 UserInfoBean userInfoBean = gson.fromJson(json,UserInfoBean.class);
-                UserInfoState.setUSER_name(userInfoBean.getData().getUSERINFO().get(0).getUSER_name()+"");
+                UserInfoState.setUserName(userInfoBean.getData().getUSERINFO().get(0).getUSER_name()+"");
                 UserInfoState.setPOSITION(userInfoBean.getData().getUSERINFO().get(0).getPOSITION()+"");
 
                 removeUserInfo();

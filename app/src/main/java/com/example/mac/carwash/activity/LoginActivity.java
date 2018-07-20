@@ -24,7 +24,6 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private Button mBtnLogin;
-    private final String jsonStr= "{\"code\":\"00\",\"data\":{\"resultset1\":[{\"QCODE\":\"1\",\"QVERSIONDESC\":\"1、UI布局优化；2、修复已知bug；3、增加新功能；\",\"QFILEPATH\":\"http://www.cetc.me/cetc5.0.14.apk\"}],\"updatecount1\":0},\"page\":null}";
     private Dialog mWeiboDialog;
     private EditText mUsername;
     private EditText mPassword;
@@ -61,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //登录接口-----------------------------------------
+        /*----------------------------------------传入账号密码，请求登录接口--------------------------------------------*/
                 LoginUtil loginUtil  = new LoginUtil(new LoginUtil.LoginInterface() {
                     @Override
                     public void callbackResult(int state, String stateName) {
@@ -82,7 +81,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    // 更新接口
+
+   /*-----------------------------------------传入version，请求更新接口--------------------------------------------------*/
     private void InItRequest() {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("versionname", StringUtil.getVersionName(this));
@@ -97,13 +97,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //通知UI 关闭结束等待中的Dialog
                 Message message = new Message();
                 message.what=111;mHandler.sendMessage(message);
-                //      mHandler.sendEmptyMessageDelayed(111, 2000);
-                //测试json：jsonStr server：json
                 JSONObject obj = JsonUtil.toJsonObject(json);
                 String code = obj.optString("code");
                 if(!code.equals("00")){
                     //接口异常，则直接退出app
-                    Toast.makeText(LoginActivity.this,"接口异常",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"请求更新接口异常",Toast.LENGTH_SHORT).show();
                     finish();
                 }else{
                     new UpdateManager(LoginActivity.this,LoginActivity.this).resolveUpdateInfo(json);
@@ -113,6 +111,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
         mServiceHelp.start(resMap,LoginActivity.this);
     }
+
+
+
 
 
     @Override
