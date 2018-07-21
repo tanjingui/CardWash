@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.main.adapter.AllOrderFragment;
@@ -63,9 +62,9 @@ public class MemberFragment extends Fragment {
     /**
      * Fragment
      */
-    private AllOrderFragment mChatFg;
-    private UnPaidFragment mFriendFg;
-    private AlrePaidFragment mContactsFg;
+    private AllOrderFragment mFragmentA;
+    private UnPaidFragment mFragmentB;
+    private AlrePaidFragment mFragmentC;
     /**
      * ViewPager的当前选中页
      */
@@ -90,9 +89,9 @@ public class MemberFragment extends Fragment {
 
     private void findById() {
         rightBtn = (Button) view.findViewById(R.id.toolbar_right_btn);
-        mTabContactsTv = (TextView) view.findViewById(R.id.id_contacts_tv);
-        mTabChatTv = (TextView) view.findViewById(R.id.id_chat_tv);   mTabChatTv.setTextSize(18);
-        mTabFriendTv = (TextView) view.findViewById(R.id.id_friend_tv);
+        mTabContactsTv = (TextView) view.findViewById(R.id.txt_alre_settle);
+        mTabChatTv = (TextView) view.findViewById(R.id.txt_all_settleState);   mTabChatTv.setTextSize(18);
+        mTabFriendTv = (TextView) view.findViewById(R.id.txt_not_settle);
         mTabLineIv = (ImageView) view.findViewById(R.id.id_tab_line_iv);
         mPageVp = (ViewPager) view.findViewById(R.id.toolbar_viewPager);
         spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
@@ -105,12 +104,12 @@ public class MemberFragment extends Fragment {
                 replaceFragment(SearchFragment.newInstance(getContext()));
             }
         });
-        mFriendFg = new UnPaidFragment();
-        mContactsFg = new AlrePaidFragment();
-        mChatFg = new AllOrderFragment();
-        mFragmentList.add(mChatFg);
-        mFragmentList.add(mFriendFg);
-        mFragmentList.add(mContactsFg);
+        mFragmentA = AllOrderFragment.newInstance();
+        mFragmentB = new UnPaidFragment();
+        mFragmentC = new AlrePaidFragment();
+        mFragmentList.add(mFragmentA);
+        mFragmentList.add(mFragmentB);
+        mFragmentList.add(mFragmentC);
         mFragmentAdapter = new FragmentAdapter(
                 getChildFragmentManager(), mFragmentList);
         mPageVp.setAdapter(mFragmentAdapter);
@@ -185,26 +184,7 @@ public class MemberFragment extends Fragment {
 
             }
         });
-        // 建立Adapter并且绑定数据源
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, UserInfoState.getStorenameList());
-        adapter.setDropDownViewResource(android.
-                R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(UserInfoState.getSelectStoreIndex());
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                UserInfoState.setSelectStoreIndex(position);
-                UserInfoState.setSelectStoreCode(UserInfoState.getStorecodeList().get(position));
-                //设置显示当前选择的项
-                parent.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        initToolBarSpinner();
     }
 
     /**
@@ -237,6 +217,26 @@ public class MemberFragment extends Fragment {
         transaction.replace(R.id.content, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void initToolBarSpinner(){
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, new ArrayList<String>(UserInfoState.getStoreMap().keySet()));
+        adapter.setDropDownViewResource(android.
+                R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(UserInfoState.getSelectStoreIndex());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //记录当前选择的门店，和门店对应的code
+                UserInfoState.setSelectStoreIndex(position);
+                UserInfoState.setSelectStoreCode(new ArrayList<String>(UserInfoState.getStoreMap().values()).get(position));
+                //设置显示当前选择的项
+                parent.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
 }

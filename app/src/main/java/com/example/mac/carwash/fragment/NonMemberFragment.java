@@ -44,6 +44,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -130,27 +131,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         finishFilter = new IntentFilter(INPUT_LICENSE_COMPLETE);
         activity.registerReceiver(receiver, finishFilter);
         mReceiverTag = true;
-
-        //初始化spinner控件
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, UserInfoState.getStorenameList());
-        adapter.setDropDownViewResource(android.
-                R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(UserInfoState.getSelectStoreIndex());
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                UserInfoState.setSelectStoreIndex(position);
-                UserInfoState.setSelectStoreCode(UserInfoState.getStorecodeList().get(position));
-                //设置显示当前选择的项
-                parent.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        initToolBarSpinner();
     }
 
     //当键盘输入完毕时候，activity接收到键盘输入的所有内容，则此次广播结束
@@ -209,7 +190,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     private void customDialog(final String carNum, int price) {
         String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n确认提交？", carNum,price);
         final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
-        View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
+        View view = View.inflate(getActivity(), R.layout.dialog_normal2, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
         TextView cancel = (TextView) view.findViewById(R.id.cancel);
         TextView confirm = (TextView) view.findViewById(R.id.confirm);
@@ -244,19 +225,27 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    public void initToolBarSpinner(){
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, new ArrayList<String>(UserInfoState.getStoreMap().keySet()));
+        adapter.setDropDownViewResource(android.
+                R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(UserInfoState.getSelectStoreIndex());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //记录当前选择的门店，和门店对应的code
+                UserInfoState.setSelectStoreIndex(position);
+                UserInfoState.setSelectStoreCode(new ArrayList<String>(UserInfoState.getStoreMap().values()).get(position));
+                //设置显示当前选择的项
+                parent.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
 
 
-
-//
-//    public List<OrderInfoBean.Data> initOrderBean(){
-//        Gson gson = new Gson();
-//        OrderInfoBean orderInfoBean;
-//        List<OrderInfoBean.Data> dataList;
-//        String result = JsonUtils.getJson(getContext(), "member.json");
-//        orderInfoBean = gson.fromJson(result, OrderInfoBean.class);
-//        dataList = orderInfoBean.getData();
-//        return dataList;
-//    }
 
     @Override
     public void onDestroy() {

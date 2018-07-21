@@ -1,6 +1,7 @@
 package com.example.mac.carwash.main.order;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,8 @@ public class UnMemberOrderAdapter extends RecyclerView.Adapter<UnMemberOrderAdap
         Data data = mDataList.get(position);
         holder.orderTime.setText(String.format(context.getResources().getString(R.string.user_order_time), data.getTIME()));
         holder.orderState.setText((data.getISSETTLEMENT()==0)?"未结算":"已结算");
-        holder.orderNum.setText(String.format(context.getResources().getString(R.string.order_num), data.getId()+""));
+        //holder.orderNum.setText(String.format(context.getResources().getString(R.string.order_num), data.getId()+""));
+        holder.orderIndex.setText(String.format(context.getResources().getString(R.string.order_index), data.getRownum_()+""));
         holder.orderFee.setText(String.format(context.getResources().getString(R.string.user_wash_fee), data.getFee()));
        holder.userName.setText(String.format(context.getResources().getString(R.string.user_car_num), data.getCarmark()));
        holder.userLevel.setText("非会员用户");
@@ -72,16 +74,17 @@ public class UnMemberOrderAdapter extends RecyclerView.Adapter<UnMemberOrderAdap
 
     //这里定义的是子项的类，不要在这里直接对获取对象进行操作
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView orderTime,orderState,orderNum,orderFee,userName,userLevel,carNum;
+        TextView orderTime,orderState,orderIndex,orderFee,userName,userLevel,carNum;
         ImageView userAvator;
         public MyViewHolder(View itemView) {
             super(itemView);
             orderTime = (TextView) itemView.findViewById(R.id.user_order_time);
             orderState = (TextView)itemView.findViewById(R.id.user_order_state);
-            orderNum = (TextView)itemView.findViewById(R.id.user_order_num);
+            orderIndex = (TextView)itemView.findViewById(R.id.user_order_index);
             orderFee = (TextView)itemView.findViewById(R.id.user_order_fee);
             userName = (TextView)itemView.findViewById(R.id.user_name);
             userLevel = (TextView)itemView.findViewById(R.id.user_member_level);
+            userLevel.setTextColor(Color.parseColor("#68228B"));
             carNum = (TextView)itemView.findViewById(R.id.user_car_num);
             userAvator = (ImageView)itemView.findViewById(R.id.user_avator);
         }

@@ -2,7 +2,7 @@
     <string name="versionCode">2000000</string>
     <string name="app_name">车易通洗车</string>
     <string name="user_order_time">开单时间:  %1$s</string>
-    <string name="order_num">订单号:  %1$s </string>
+    <string name="order_index">   第 %1$s 条</string>
     <string name="user_wash_fee">洗车费用: %1$s 元</string>
     <string name="user_name">姓名:  %1$s </string>
     <string name="user_car_num">车牌号 :%1$s</string>

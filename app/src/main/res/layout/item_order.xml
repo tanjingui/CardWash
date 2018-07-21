@@ -58,8 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:textColor="@color/purple"
-                    tools:text=" " />
+                    android:text="" />
 
             </LinearLayout>
 
@@ -107,10 +106,10 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/user_order_num"
+            android:id="@+id/user_order_index"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/order_num"
+            android:text="@string/order_index"
             android:textColor="#697d91" />
 
         <TextView

@@ -70,9 +70,9 @@ public class MemberActivity extends FragmentActivity {
     }
 
     private void findById() {
-        mTabContactsTv = (TextView) this.findViewById(R.id.id_contacts_tv);
-        mTabChatTv = (TextView) this.findViewById(R.id.id_chat_tv);
-        mTabFriendTv = (TextView) this.findViewById(R.id.id_friend_tv);
+        mTabContactsTv = (TextView) this.findViewById(R.id.txt_alre_settle);
+        mTabChatTv = (TextView) this.findViewById(R.id.txt_all_settleState);
+        mTabFriendTv = (TextView) this.findViewById(R.id.txt_not_settle);
 
         mTabLineIv = (ImageView) this.findViewById(R.id.id_tab_line_iv);
 
@@ -82,7 +82,7 @@ public class MemberActivity extends FragmentActivity {
     private void init() {
         mUnPaidFragment = new UnPaidFragment();
         mAlrePaidFragment = new AlrePaidFragment();
-        mAllOrderFragment = new AllOrderFragment();
+        mAllOrderFragment = AllOrderFragment.newInstance();
         mFragmentList.add(mAllOrderFragment);
         mFragmentList.add(mUnPaidFragment);
         mFragmentList.add(mAlrePaidFragment);

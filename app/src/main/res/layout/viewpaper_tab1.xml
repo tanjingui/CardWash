@@ -12,6 +12,7 @@
         app:srlAccentColor="#00000000"
         app:srlPrimaryColor="#00000000"
         app:srlEnablePreviewInEditMode="true">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
             android:scrollbars="vertical"

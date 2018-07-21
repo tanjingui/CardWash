@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.LoginActivity;
 import com.example.mac.carwash.jsonBean.UpdateResponseInfo;
@@ -238,7 +237,7 @@ public class UpdateManager {
         }else{
            return;
        }
-        Log.i("------info------666",apkCode+"  "+updateMessage+"  "+apkUrl);
+        //Log.i("------info------666",apkCode+"  "+updateMessage+"  "+apkUrl);
     }
     public void get(final LoginActivity activity){
         PermissionUtil.getInstance().request(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},

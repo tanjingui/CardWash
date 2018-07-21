@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.mac.carwash.R;
+import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.jsonBean.MemberWarshCarRecordsInfo;
 import com.example.mac.carwash.main.order.MemberOrderAdapter;
 import com.example.mac.carwash.view.RecycleViewDivider;
@@ -31,6 +33,20 @@ public class AllOrderFragment extends Fragment {
 	private RecyclerView mRecyclerView;
 	private RefreshLayout mRefreshLayout;
 	private FragmentActivity mActivity;
+
+//-------------------------刷新变量----------------------------------------
+	MemberOrderAdapter mMemberOrderAdapter;
+	Boolean flag = true;
+	Boolean hasNextPage = true;
+	int currentPage = 1;
+
+
+	public static AllOrderFragment newInstance() {
+		AllOrderFragment fragment = new AllOrderFragment();
+		return fragment;
+	}
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -44,14 +60,17 @@ public class AllOrderFragment extends Fragment {
 	public void init(){
 		mRecyclerView=(RecyclerView) view.findViewById(R.id.rv);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-		queryTodayAllMemberWarshCarRecords(currentPage,-1);
+		mRecyclerView.addItemDecoration(new RecycleViewDivider(
+								view.getContext(), LinearLayoutManager.VERTICAL, 12, getResources().getColor(R.color.black)));
+		queryTodayAllMemberWarshCarRecords(-1);
 		mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 		//刷新
 		mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
 			@Override
 			public void onRefresh(RefreshLayout refreshlayout) {
-				queryTodayAllMemberWarshCarRecords(currentPage,0);
+				currentPage = 1;
+				queryTodayAllMemberWarshCarRecords(0);
 			}
 		});
 
@@ -59,7 +78,8 @@ public class AllOrderFragment extends Fragment {
 		 mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
 		 @Override
 		 public void onLoadmore(RefreshLayout refreshlayout) {
-			 queryTodayAllMemberWarshCarRecords(currentPage,1);
+			 if(hasNextPage==false){	Toast.makeText(mActivity,"下拉没有更多数据了！",Toast.LENGTH_SHORT).show();mRefreshLayout.finishLoadmore();return; }
+			 queryTodayAllMemberWarshCarRecords(1);
 		 } });
 	}
 
@@ -72,14 +92,9 @@ public class AllOrderFragment extends Fragment {
 	public void add(){
 		currentPage++;
 	}
-
-
-
-
-
-
-
-
+	public void reset(){
+		currentPage=1;
+	}
 
 
 
@@ -88,52 +103,47 @@ public class AllOrderFragment extends Fragment {
 
 
 	/*-----------------------------查询当天所有会员用户订单记录--------------------------------------------------*/
-/*
-*  #param operation 0是执行下拉刷新，1是执行加载更多 传入-1为初次加载
-*  currentPage 当面请求页面
-* */
-	Boolean flag = true;//判断是否第一次进入，第一次进入需要走的流程全写出来
-	Boolean hasNext = false;  //是否有下一页也有进行判断
-	int currentPage = 1;
-	final int pageRecordCount = 7; //默认一页显示7条
-	//先解决下拉刷新，传入1，不用动flag标志，直接调用通用的mAdapter.refresh(getData()),flag==false中的停止刷新
-	//再解决上拉加载更多，传入i++，不能refresh，
-	//最后解决是否滑到底 是否还有数据  进行判断  避免出错
-	//可能的error：进来没有数据盲目的刷新和加载更多；刷到底没有数据，还继续刷
-	MemberOrderAdapter mMemberOrderAdapter;
-	private void queryTodayAllMemberWarshCarRecords(final int currentPage, final int operation) {
+	private void queryTodayAllMemberWarshCarRecords(final int operation) {
 		Map<String, Object> resMap = new HashMap<>();
 		resMap.put("sqlKey",  "CS_XICHE_LIST");
-        resMap.put("store","0001");
-		//resMap.put("state","1"); //传入需要查找订单类别   试了没用？？？？？？ //0是未结算 1是已结算 ""是全部的-------------
+        resMap.put("store", UserInfoState.getSelectStoreCode());
+		resMap.put("state",""); //传入需要查找订单类别   试了没用？？？？？？ //0是未结算 1是已结算 ""是全部的-------------
 		resMap.put("sqlType", "sql");
 		Map<String,Object>page = new HashMap<>();
-		page.put("currentPage",currentPage);  //
-		page.put("pageRecordCount",pageRecordCount); //数据库查询到的总数/7  然后选择要查看第几页
+		page.put("currentPage",currentPage);
+		page.put("pageRecordCount",3); //数据库查询到的总数/7  然后选择要查看第几页
 		resMap.put("page",page);
-		WebServiceHelp mServiceHelp = new WebServiceHelp(mActivity,"iPadService.asmx", "loadDataList", PubData.class,flag,"2");
+		WebServiceHelp mServiceHelp = new WebServiceHelp(mActivity,"iPadService.asmx", "loadDataList", PubData.class,false,"2");
 		mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
 			@Override
 			public void onServiceCallBackString(boolean haveCallBack, String json) {
 				Log.i("uuu服务器返回所有当天会员用户洗车信息：：",""+json);
 				Gson gson = new Gson();
 				MemberWarshCarRecordsInfo memberWarshCarRecordsInfo = gson.fromJson(json, MemberWarshCarRecordsInfo.class);
-				//将server传来的数据 适配recyclerView
-				Log.i("解析出来的信息：：",""+memberWarshCarRecordsInfo.toString());
-				if(flag==true){
-					//第一次进入 走默认的流程
-					mMemberOrderAdapter = new MemberOrderAdapter(memberWarshCarRecordsInfo.getData(),getContext());
-					mRecyclerView.setAdapter(mMemberOrderAdapter);
-					mRecyclerView.addItemDecoration(new RecycleViewDivider(
-							view.getContext(), LinearLayoutManager.VERTICAL, 12, getResources().getColor(R.color.black)));}
-				else{
-					//这里处理刷新 或者 加载更多的操作  需要对这个进行判断
-					if(operation==0){mMemberOrderAdapter.refresh(memberWarshCarRecordsInfo.getData());mRefreshLayout.finishRefresh();}else if(operation==1){
-						mMemberOrderAdapter.add(memberWarshCarRecordsInfo.getData());	mRefreshLayout.finishLoadmore();add();}
+				if(memberWarshCarRecordsInfo.getCode().equals("01")){
+					mMemberOrderAdapter.clearAll();Toast.makeText(mActivity,"没有数据！",Toast.LENGTH_SHORT).show(); if(operation==0){mRefreshLayout.finishRefresh();}else if(operation==1){mRefreshLayout.finishLoadmore();}  reset(); return;
+				}else if(memberWarshCarRecordsInfo.getCode().equals("00")){
+                     if(memberWarshCarRecordsInfo.getPage().getHasNextPage()==false){
+						 hasNextPage = false;
+					 }
+					if(flag){ //初次加载
+						mMemberOrderAdapter = new MemberOrderAdapter(memberWarshCarRecordsInfo.getData(),getContext());
+						mRecyclerView.setAdapter(mMemberOrderAdapter);flag=false;reset();add();
+					}else{
+						if(operation==0){  //刷新肯定不是初次加载
+							mMemberOrderAdapter.refresh(memberWarshCarRecordsInfo.getData());flag = false;mRefreshLayout.finishRefresh();reset();add();hasNextPage=true;
+						}else if(operation==1){
+							mMemberOrderAdapter.add(memberWarshCarRecordsInfo.getData());flag = false;mRefreshLayout.finishLoadmore();add();
+						}
+					}
+				}else{
+					Toast.makeText(mActivity,"未知错误！ code="+memberWarshCarRecordsInfo.getCode(),Toast.LENGTH_SHORT).show();return;
 				}
-				flag = false;
+				mRefreshLayout.finishRefresh();
+				mRefreshLayout.finishLoadmore();
 			}
 		});
 		mServiceHelp.start(resMap,mActivity);
 	}
+
 }

@@ -39,6 +39,7 @@ import com.example.mac.carwash.webservice.PubData;
 import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,9 +53,11 @@ public class IndexFragment extends Fragment  {
     private Button btnWashCar;
     private Button btnWashCarRecords;
     private Button btnPay;
-    BaseActivity activity;
+    private BaseActivity activity;
     private Spinner spinner;
     private TextView mOrderPrice;
+    private CustomerInfoBean customerInfoBean;    //临时变量，保存扫码客户信息
+
     public static IndexFragment newInstance() {
         IndexFragment fragment = new IndexFragment();
         return fragment;
@@ -67,38 +70,12 @@ public class IndexFragment extends Fragment  {
         return view;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        startQrCode();
-    }
-
     public void initView(){
         btnWashCarRecords = (Button)view.findViewById(R.id.btn_washCar_records);
         btnPay = (Button)view.findViewById(R.id.btn_pay);
         mOrderPrice = (TextView)view.findViewById(R.id.tv_info_order_price);
         spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
-        //String[] mItems = new String[]{};
-        // 建立Adapter并且绑定数据源
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, UserInfoState.getStorenameList());
-        adapter.setDropDownViewResource(android.
-                R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(UserInfoState.getSelectStoreIndex());
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                UserInfoState.setSelectStoreIndex(position);
-                UserInfoState.setSelectStoreCode(UserInfoState.getStorecodeList().get(position));
-                //设置显示当前选择的项
-                parent.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        initToolBarSpinner();
 
         btnQrCode = (Button)view.findViewById(R.id.toolbar_right_btn);
         btnWashCar = (Button) view.findViewById(R.id.btn_washCard);
@@ -152,12 +129,7 @@ public class IndexFragment extends Fragment  {
             String scanResult = bundle.getString(Constant.INTENT_EXTRA_KEY_QR_SCAN);
              //这个bug还得继续测试------------------------------------------------------------
             //将扫描出的信息显示出来
-            InItRequest(scanResult);
-          //  textView.setText(scanResult);
-//            Message msg = new Message();
-//            msg.what = 1111;
-//            msg.obj = scanResult;
-//            mHandler.sendMessage(msg);
+            getCustomerInfoByQRCodeRequest(scanResult);
         }
     }
 
@@ -182,7 +154,7 @@ public class IndexFragment extends Fragment  {
     private void customDialog1(String price) {
         String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认开单？", price);
         final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
-        View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
+        View view = View.inflate(getActivity(), R.layout.dialog_normal2, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
         TextView cancel = (TextView) view.findViewById(R.id.cancel);
         TextView confirm = (TextView) view.findViewById(R.id.confirm);
@@ -218,10 +190,12 @@ public class IndexFragment extends Fragment  {
     private void customDialog2(String price) {
         String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认结算？", price);
         final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
-        View view = View.inflate(getActivity(), R.layout.dialog_normal, null);
+        View view = View.inflate(getActivity(), R.layout.dialog_normal3, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
-        TextView cancel = (TextView) view.findViewById(R.id.cancel);
-        TextView confirm = (TextView) view.findViewById(R.id.confirm);
+        TextView tv1 = (TextView) view.findViewById(R.id.btn_select1);
+        TextView tv2 = (TextView) view.findViewById(R.id.btn_select2);
+        TextView tv3 = (TextView) view.findViewById(R.id.btn_select3);
+        tv1.setText("会员卡结算"); tv2.setText("洗车卡结算"); tv3.setText("现金结算");
         dialog_content.setText(Html.fromHtml(title));
         dialog.setContentView(view);
         //使得点击对话框外部不消失对话框
@@ -234,29 +208,61 @@ public class IndexFragment extends Fragment  {
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.gravity = Gravity.CENTER;
         dialogWindow.setAttributes(lp);
-        cancel.setOnClickListener(new View.OnClickListener() {
+        //订单的价格变动需要谨慎处理  需考虑到各种突发情况
+        tv1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //会员卡结算
+                openPayForMemberRequest(0);
                 dialog.dismiss();
             }
         });
-        confirm.setOnClickListener(new View.OnClickListener() {
+        tv2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //订单的价格需要谨慎处理  需考虑到各种突发情况
-                openPayForMemberRequest();
+                //洗车卡结算
+                openPayForMemberRequest(1);
+                dialog.dismiss();
+            }
+        });
+        tv3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //现金结算
+                openPayForMemberRequest(2);
                 dialog.dismiss();
             }
         });
         dialog.show();
     }
+
+    public void initToolBarSpinner(){
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, new ArrayList<String>(UserInfoState.getStoreMap().keySet()));
+        adapter.setDropDownViewResource(android.
+                R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(UserInfoState.getSelectStoreIndex());
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //记录当前选择的门店，和门店对应的code
+                UserInfoState.setSelectStoreIndex(position);
+                UserInfoState.setSelectStoreCode(new ArrayList<String>(UserInfoState.getStoreMap().values()).get(position));
+                //设置显示当前选择的项
+                parent.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
     public void changeButtonState(){
         Button button =  (Button)view.findViewById(R.id.btn_washCard);
         button.setText("已开单");
         button.setTextColor(getResources().getColor(R.color.darkslategray));
         button.setEnabled(false);
     }
-    CustomerInfoBean customerInfoBean;
+
 
 
 
@@ -289,9 +295,8 @@ public class IndexFragment extends Fragment  {
 
 
 
-
      /*-----------------------------------------传入qrcode，请求顾客信息--------------------------------------------------*/
-    private void InItRequest(String qrcode) {
+    private void getCustomerInfoByQRCodeRequest(String qrcode) {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("qrcode", qrcode);
         resMap.put("sqlKey", "CS_xiche_info_by_qrcode");
@@ -320,7 +325,7 @@ public class IndexFragment extends Fragment  {
         if(!checkState()) return;
         Map<String, Object> resMap = new HashMap<>();
         resMap.put("SETTLEMENTID", customerInfoBean.getData().getId()); //结算的id  这个是用户id
-        resMap.put("PRICE", "0.0");
+        resMap.put("PRICE", customerInfoBean.getData().getOFEE()+"");
         resMap.put("sqlType", "proc");
         resMap.put("PROID", "900.0");
         resMap.put("sqlKey",  "CP_ADD_XICHE_ORDER");
@@ -337,7 +342,7 @@ public class IndexFragment extends Fragment  {
                 }else if(data.getOCODE().equals("99")){
                     Toast.makeText(getActivity(),"您不要重复开单！"+data.getOCODE(),Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(getActivity(),"未知错误",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"未知错误 code="+data.getOCODE(),Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -346,12 +351,11 @@ public class IndexFragment extends Fragment  {
 
 
     /*-----------------------------------------会员结算请求--------------------------------------------------*/
-    private void openPayForMemberRequest() {
+    private void openPayForMemberRequest(int PayWay) {
         if(!checkState()) return;
         Map<String, Object> resMap = new HashMap<String, Object>();
-        //resMap.put("sessionId", "d86bd28a13a248cf9cf23ac04dfd2818");
         resMap.put("sqlKey", "CP_SETTLEMENT_XICHE_ORDER");
-        resMap.put("settlementWay", 0);
+        resMap.put("settlementWay", PayWay);
         resMap.put("bcid",customerInfoBean.getData().getId());
         resMap.put("sqlType", "proc");
         WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,true,"2");
@@ -366,7 +370,7 @@ public class IndexFragment extends Fragment  {
                 } else if(code.equals("00")){
                     Toast.makeText(getActivity(), "结算成功！", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(getActivity(), "结算失败，未知错误！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "结算失败，未知错误！ code"+code, Toast.LENGTH_SHORT).show();
                     return;
                 }
             }

@@ -35,9 +35,8 @@ import com.example.mac.carwash.view.BottomPopupOption;
 import com.example.mac.carwash.webservice.PubDataList;
 import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +84,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
         setContentView(R.layout.layout_main);
         initView();  //初始化layout各种控件  将得到信息填充
         //请求门店信息， 再去初始化加载内部fragment布局 && 只请求一次
-        if(UserInfoState.getSelectStore()==-1){
+        if(UserInfoState.getSelectStoreIndex()==-1){
              acquireStoreInfo();}
     }
 
@@ -284,17 +283,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
             public void onServiceCallBackString(boolean haveCallBack, String json) {
                 Gson gson = new Gson();
                 StoreInfoBean storeInfoBean;
-                List<String>deptList = new ArrayList<String>();
+               Map<String,String>map = new LinkedHashMap<String, String>(){};
                 storeInfoBean = gson.fromJson(json,StoreInfoBean.class);
                 List<StoreInfoBean.Data> list = storeInfoBean.getData();
-                Iterator<StoreInfoBean.Data> iterator = list.iterator();
-                while(iterator.hasNext()){
-                    String deptName = iterator.next().getDeptName();
-                    deptList.add(deptName);
+                for(StoreInfoBean.Data item: list) {
+                    String deptName = item.getDeptName();
+                    String deptCode = item.getDEPT_CODE();
+                    map.put(deptName,deptCode);
                 }
-                UserInfoState.setSTORELIST(deptList);
+                UserInfoState.setStoreMap(map);
+                UserInfoState.setSelectStoreIndex(0);  //默认选择第一项
+                UserInfoState.setSelectStoreCode(list.get(0).getDEPT_CODE());
                 //获取到所有初始化布局的信息后，再去加载UI，填充界面 && 先显示会员订单界面
-                replaceFragment(new MemberFragment().newInstance(),"member");
+                replaceFragment(MemberFragment.newInstance(),"member");
             }
         });
         mServiceHelp.start(resMap, this);

@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.main.update.UpdateManager;
 import com.example.mac.carwash.util.StringUtil;
@@ -18,11 +18,13 @@ import com.example.mac.carwash.webservice.JsonUtil;
 import com.example.mac.carwash.webservice.LoginUtil;
 import com.example.mac.carwash.webservice.PubData;
 import com.example.mac.carwash.webservice.WebServiceHelp;
+
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity{
     private Button mBtnLogin;
     private Dialog mWeiboDialog;
     private EditText mUsername;
@@ -34,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             super.handleMessage(msg);
             switch (msg.what){
                 case 111:
-                    WeiboDialogUtils.closeDialog(mWeiboDialog);
+                    WeiboDialogUtils.closeDialog(mWeiboDialog);  //关闭LoadingDialog
                     break;
                 default:
                     break;
@@ -45,12 +47,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_login);
-        mWeiboDialog = WeiboDialogUtils.createLoadingDialog(LoginActivity.this, "加载中...");
-        InItRequest();
-        //离线下模拟
-        //  new UpdateManager(this,this).resolveUpdateInfo(jsonStr);
+        mWeiboDialog = WeiboDialogUtils.createLoadingDialog(LoginActivity.this, "加载中...");//检查更新后  再结束LoadingDialog
+        checkForUpdateRequest();//检查更新
         initView();
     }
+
+
 
     public void initView(){
         mServiceHelp = new WebServiceHelp(LoginActivity.this,"iNoSService.asmx", "loadData", PubData.class,false,"0");
@@ -60,30 +62,48 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-        /*----------------------------------------传入账号密码，请求登录接口--------------------------------------------*/
-                LoginUtil loginUtil  = new LoginUtil(new LoginUtil.LoginInterface() {
-                    @Override
-                    public void callbackResult(int state, String stateName) {
-                        if (state == 0) {
-                            Intent intent = new Intent();
-                            intent.setClass(LoginActivity.this,BaseActivity.class);
-                            startActivity(intent);
-                            LoginActivity.this.finish();
-                        } else {
-                            Toast.makeText(LoginActivity.this,""+stateName,Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },"sx001","1996tjg",LoginActivity.this,"1", mServiceHelp);
-                loginUtil.startLogin(true);
-
+//                if(mUsername.getText().toString().equals("")||mPassword.getText().toString().equals("")){
+//                    Toast.makeText(LoginActivity.this,"请填写账号密码！",Toast.LENGTH_SHORT).show();return;
+//                }else{
+                      submitRequest();
+//                }
             }
         });
     }
 
 
 
+
+
+
+
+
+
+
+
+
+
+     /*----------------------------------------传入账号密码，请求登录接口--------------------------------------------*/
+    private void submitRequest(){
+        LoginUtil loginUtil  = new LoginUtil(new LoginUtil.LoginInterface() {
+            @Override
+            public void callbackResult(int state, String stateName) {
+                if (state == 0) {
+                    Intent intent = new Intent();
+                    intent.setClass(LoginActivity.this,BaseActivity.class);
+                    startActivity(intent);
+                    LoginActivity.this.finish();
+                } else {
+                    Toast.makeText(LoginActivity.this,""+stateName,Toast.LENGTH_SHORT).show();
+                }
+            }
+        },"sx001","1996tjg",LoginActivity.this,"1", mServiceHelp);
+        loginUtil.startLogin(true);
+    }
+
+
    /*-----------------------------------------传入version，请求更新接口--------------------------------------------------*/
-    private void InItRequest() {
+    private void checkForUpdateRequest() {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("versionname", StringUtil.getVersionName(this));
         resMap.put("locversioncode", StringUtil.getVersionCode(this));
@@ -106,19 +126,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }else{
                     new UpdateManager(LoginActivity.this,LoginActivity.this).resolveUpdateInfo(json);
                 }
-                Log.i("66666",""+code+"  "+json);
             }
         });
         mServiceHelp.start(resMap,LoginActivity.this);
-    }
-
-
-
-
-
-    @Override
-    public void onClick(View v) {
-
     }
 }
 
