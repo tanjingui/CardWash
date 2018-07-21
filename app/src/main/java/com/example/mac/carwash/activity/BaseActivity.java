@@ -104,7 +104,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
         mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.icon_shop_normal, "扫码洗车"))
                 .addItem(new BottomNavigationItem(R.drawable.icon_my_normal, "会员"))
                 .addItem(new BottomNavigationItem(R.drawable.icon_cart_normal, "非会员"))
-                .setFirstSelectedPosition(1)
+                //.setFirstSelectedPosition(1)  第一个默认呈现的item
                 .initialise();
 
         mBottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener(){
@@ -295,7 +295,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                 UserInfoState.setSelectStoreIndex(0);  //默认选择第一项
                 UserInfoState.setSelectStoreCode(list.get(0).getDEPT_CODE());
                 //获取到所有初始化布局的信息后，再去加载UI，填充界面 && 先显示会员订单界面
-                replaceFragment(MemberFragment.newInstance(),"member");
+                replaceFragment(IndexFragment.newInstance(),"index");
             }
         });
         mServiceHelp.start(resMap, this);

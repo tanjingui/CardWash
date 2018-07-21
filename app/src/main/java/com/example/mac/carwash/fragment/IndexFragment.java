@@ -56,7 +56,7 @@ public class IndexFragment extends Fragment  {
     private BaseActivity activity;
     private Spinner spinner;
     private TextView mOrderPrice;
-    private CustomerInfoBean customerInfoBean;    //临时变量，保存扫码客户信息
+    private CustomerInfoBean customerInfoBean=null;    //临时变量，保存扫码客户信息 非常重要
 
     public static IndexFragment newInstance() {
         IndexFragment fragment = new IndexFragment();
@@ -89,7 +89,7 @@ public class IndexFragment extends Fragment  {
         btnWashCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOrderPrice.getText().toString().equals("")){
+                if(customerInfoBean==null){
                     Toast.makeText(getActivity(),"请先扫码！！",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -100,7 +100,7 @@ public class IndexFragment extends Fragment  {
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOrderPrice.getText().toString().equals("")){
+                if(customerInfoBean==null){
                     Toast.makeText(getActivity(),"请先扫码！！",Toast.LENGTH_SHORT).show();
                     return;
                 }customDialog2(mOrderPrice.getText().toString());
@@ -308,11 +308,15 @@ public class IndexFragment extends Fragment  {
                 //这里需判断是否是有效的二维码，如果server回应不能识别，应拒return，避免出错
                 Gson gson = new Gson();
                 customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
+                if(customerInfoBean.getCode().equals("00")){
                 CustomerInfoBean.Data data = customerInfoBean.getData();
                 Message message = new Message();
                 message.what=111;message.obj = data;
                 BaseActivity baseActivity = (BaseActivity) getActivity();
-                baseActivity.handler.sendMessage(message);
+                baseActivity.handler.sendMessage(message);}
+                else{
+                    Toast.makeText(getActivity(),"存在异常 code="+customerInfoBean.getCode()+"",Toast.LENGTH_SHORT).show();return;
+                }
             }
         });
         mServiceHelp.start(resMap,getActivity());
@@ -365,10 +369,10 @@ public class IndexFragment extends Fragment  {
                 Gson gson = new Gson();
                 PayResponseBean payResponseBean = gson.fromJson(json, PayResponseBean.class);
                 String code = payResponseBean.getCode();
-                if (code.equals("99")) {
-                    Toast.makeText(getActivity(), "重复结算！", Toast.LENGTH_SHORT).show();
-                } else if(code.equals("00")){
+                if (code.equals("00")) {
                     Toast.makeText(getActivity(), "结算成功！", Toast.LENGTH_SHORT).show();
+                } else if(code.equals("99")){
+                    Toast.makeText(getActivity(), "重复结算！", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getActivity(), "结算失败，未知错误！ code"+code, Toast.LENGTH_SHORT).show();
                     return;
