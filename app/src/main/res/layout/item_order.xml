@@ -50,8 +50,7 @@
                     android:id="@+id/user_avator"
                     android:layout_width="70dp"
                     android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    tools:src="@mipmap/default_avator" />
+                    android:layout_marginLeft="10dp" />
 
                 <TextView
                     android:id="@+id/user_member_level"
@@ -109,6 +108,7 @@
             android:id="@+id/user_order_index"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
             android:text="@string/order_index"
             android:textColor="#697d91" />
 

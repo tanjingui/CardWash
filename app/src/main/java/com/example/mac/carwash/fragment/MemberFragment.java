@@ -101,7 +101,7 @@ public class MemberFragment extends Fragment {
         rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceFragment(SearchFragment.newInstance(getContext()));
+                addFragment(SearchFragment.newInstance(getContext()),"search");
             }
         });
         mFragmentA = AllOrderFragment.newInstance();
@@ -217,6 +217,23 @@ public class MemberFragment extends Fragment {
         transaction.replace(R.id.content, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    private void addFragment(Fragment fragment,String tag){
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        transaction = mFragmentManager.beginTransaction();
+        transaction.add(R.id.content,fragment,tag);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        transaction.hide(this);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!isHidden()){
+            transaction.show(this);
+        }
     }
 
     public void initToolBarSpinner(){

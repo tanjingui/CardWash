@@ -11,8 +11,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +36,7 @@ import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
 import com.example.mac.carwash.jsonBean.PayResponseBean;
+import com.example.mac.carwash.main.record.MemberWashCarRecordsFragment;
 import com.example.mac.carwash.util.Constant;
 import com.example.mac.carwash.util.ScreenSizeUtils;
 import com.example.mac.carwash.webservice.PubData;
@@ -57,6 +61,10 @@ public class IndexFragment extends Fragment  {
     private Spinner spinner;
     private TextView mOrderPrice;
     private CustomerInfoBean customerInfoBean=null;    //临时变量，保存扫码客户信息 非常重要
+    private String scanResult="";
+    //父activity fragmentManager引用
+    private FragmentManager mFragmentManager;
+    private FragmentTransaction transaction;
 
     public static IndexFragment newInstance() {
         IndexFragment fragment = new IndexFragment();
@@ -71,13 +79,13 @@ public class IndexFragment extends Fragment  {
     }
 
     public void initView(){
-        btnWashCarRecords = (Button)view.findViewById(R.id.btn_washCar_records);
+        btnQrCode = (Button)view.findViewById(R.id.btn_QRCode);
         btnPay = (Button)view.findViewById(R.id.btn_pay);
         mOrderPrice = (TextView)view.findViewById(R.id.tv_info_order_price);
         spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
         initToolBarSpinner();
 
-        btnQrCode = (Button)view.findViewById(R.id.toolbar_right_btn);
+        btnWashCarRecords = (Button)view.findViewById(R.id.toolbar_right_btn);
         btnWashCar = (Button) view.findViewById(R.id.btn_washCard);
         view.findViewById(R.id.content);
         btnQrCode.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +114,15 @@ public class IndexFragment extends Fragment  {
                 }customDialog2(mOrderPrice.getText().toString());
             }
         });
+        btnWashCarRecords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(customerInfoBean==null){
+                    Toast.makeText(getActivity(),"请先扫码！！",Toast.LENGTH_SHORT).show();
+                    return;
+                }addFragment(MemberWashCarRecordsFragment.newInstance(customerInfoBean.getData().getId()+"",scanResult),"records");
+            }
+        });
     }
 
     // 开始扫码
@@ -126,7 +143,7 @@ public class IndexFragment extends Fragment  {
         //扫描结果回调
         if (requestCode == Constant.REQ_QR_CODE && resultCode == Activity.RESULT_OK) {
             Bundle bundle = data.getExtras();
-            String scanResult = bundle.getString(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+            scanResult = bundle.getString(Constant.INTENT_EXTRA_KEY_QR_SCAN);
              //这个bug还得继续测试------------------------------------------------------------
             //将扫描出的信息显示出来
             getCustomerInfoByQRCodeRequest(scanResult);
@@ -263,9 +280,30 @@ public class IndexFragment extends Fragment  {
         button.setEnabled(false);
     }
 
+    private void replaceFragment(Fragment fragment) {
+        mFragmentManager =getActivity().getSupportFragmentManager();
+        transaction = mFragmentManager.beginTransaction();
+        transaction.replace(R.id.content, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
+    private void addFragment(Fragment fragment,String tag){
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        transaction = mFragmentManager.beginTransaction();
+        transaction.add(R.id.content,fragment,tag);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        transaction.hide(this);
+    }
 
-
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!isHidden()){
+            transaction.show(this);
+        }
+    }
 
     //检查是否有id信息
     public Boolean checkState() {
@@ -307,6 +345,7 @@ public class IndexFragment extends Fragment  {
             public void onServiceCallBackString(boolean haveCallBack, String json) {
                 //这里需判断是否是有效的二维码，如果server回应不能识别，应拒return，避免出错
                 Gson gson = new Gson();
+                Log.i("999999999999",""+json+"");
                 customerInfoBean = gson.fromJson(json, CustomerInfoBean.class);
                 if(customerInfoBean.getCode().equals("00")){
                 CustomerInfoBean.Data data = customerInfoBean.getData();
@@ -354,7 +393,7 @@ public class IndexFragment extends Fragment  {
     }
 
 
-    /*-----------------------------------------会员结算请求--------------------------------------------------*/
+    /*-----------------------------------------结算请求--------------------------------------------------*/
     private void openPayForMemberRequest(int PayWay) {
         if(!checkState()) return;
         Map<String, Object> resMap = new HashMap<String, Object>();

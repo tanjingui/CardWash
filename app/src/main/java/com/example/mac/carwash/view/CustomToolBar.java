@@ -128,6 +128,7 @@ public class CustomToolBar extends LinearLayout{
         rightTv.setText(rightTvText);
         titleTv.setText(titleText);
 
+
         if(leftResId != -1){
             leftBtn.setBackgroundResource(leftResId);
         }

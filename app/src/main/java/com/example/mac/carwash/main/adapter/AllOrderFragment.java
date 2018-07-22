@@ -22,7 +22,6 @@ import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
 import java.util.HashMap;
 import java.util.Map;
 //import net.sf.json.JSONArray;
@@ -36,9 +35,9 @@ public class AllOrderFragment extends Fragment {
 
 //-------------------------刷新变量----------------------------------------
 	MemberOrderAdapter mMemberOrderAdapter;
-	Boolean flag = true;
-	Boolean hasNextPage = true;
-	int currentPage = 1;
+	Boolean flag = true;  //是否初次加载
+	Boolean hasNextPage = true;  //是否有下一页
+	int currentPage = 1;   //  请求server 需+1
 
 
 	public static AllOrderFragment newInstance() {
@@ -55,7 +54,6 @@ public class AllOrderFragment extends Fragment {
 		init();
 		return view;
 	}
-
 
 	public void init(){
 		mRecyclerView=(RecyclerView) view.findViewById(R.id.rv);
@@ -83,12 +81,13 @@ public class AllOrderFragment extends Fragment {
 		 } });
 	}
 
-
 	@Override
-	public void onDestroy() {
+	public void onDestroyView() {
+		super.onDestroyView();
 		super.onDestroy();
 		flag = true;
 	}
+
 	public void add(){
 		currentPage++;
 	}
@@ -113,7 +112,7 @@ public class AllOrderFragment extends Fragment {
 		page.put("currentPage",currentPage);
 		page.put("pageRecordCount",3); //数据库查询到的总数/7  然后选择要查看第几页
 		resMap.put("page",page);
-		WebServiceHelp mServiceHelp = new WebServiceHelp(mActivity,"iPadService.asmx", "loadDataList", PubData.class,false,"2");
+		WebServiceHelp mServiceHelp = new WebServiceHelp(mActivity,"iPadService.asmx", "loadDataList", PubData.class,flag,"2");
 		mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
 			@Override
 			public void onServiceCallBackString(boolean haveCallBack, String json) {
@@ -121,7 +120,8 @@ public class AllOrderFragment extends Fragment {
 				Gson gson = new Gson();
 				MemberWarshCarRecordsInfo memberWarshCarRecordsInfo = gson.fromJson(json, MemberWarshCarRecordsInfo.class);
 				if(memberWarshCarRecordsInfo.getCode().equals("01")){
-					mMemberOrderAdapter.clearAll();Toast.makeText(mActivity,"没有数据！",Toast.LENGTH_SHORT).show(); if(operation==0){mRefreshLayout.finishRefresh();}else if(operation==1){mRefreshLayout.finishLoadmore();}  reset(); return;
+					if(mMemberOrderAdapter!=null) mMemberOrderAdapter.clearAll();
+					Toast.makeText(mActivity,"没有数据！",Toast.LENGTH_SHORT).show(); if(operation==0){mRefreshLayout.finishRefresh();}else if(operation==1){mRefreshLayout.finishLoadmore();}  reset(); return;
 				}else if(memberWarshCarRecordsInfo.getCode().equals("00")){
                      if(memberWarshCarRecordsInfo.getPage().getHasNextPage()==false){
 						 hasNextPage = false;
