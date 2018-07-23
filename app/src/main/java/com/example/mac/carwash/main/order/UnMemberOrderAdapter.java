@@ -11,10 +11,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mac.carwash.R;
+import com.example.mac.carwash.jsonBean.PayResponseBean;
 import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo;
 import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo.Data;
+import com.example.mac.carwash.webservice.PubData;
+import com.example.mac.carwash.webservice.WebServiceHelp;
+import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * Created by mac on 2018/7/11.
  */
@@ -49,13 +56,6 @@ public class UnMemberOrderAdapter extends RecyclerView.Adapter<UnMemberOrderAdap
        holder.userLevel.setText("非会员用户");
         holder.carNum.setText("");
         holder.userAvator.setImageResource(R.mipmap.unmember_avator);
-//        Glide.with(context)
-//                .load("")
-//                .error(R.mipmap.default_avator)
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                .dontAnimate()
-//                .centerCrop()
-//                .into(holder.userAvator);
         //子项的点击事件监听
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,4 +118,38 @@ public class UnMemberOrderAdapter extends RecyclerView.Adapter<UnMemberOrderAdap
         mDataList.clear();
         notifyDataSetChanged();
     }
+
+
+
+
+
+
+
+    /*-----------------------------------------结算请求--------------------------------------------------*/
+    private void openPayForMemberRequest(int OrderId,int PayWay) {
+        Map<String, Object> resMap = new HashMap<String, Object>();
+        resMap.put("sqlKey", "CP_SETTLEMENT_XICHE_ORDER");
+        resMap.put("settlementWay", PayWay);
+        resMap.put("bcid",OrderId);
+        resMap.put("sqlType", "proc");
+        WebServiceHelp mServiceHelp = new WebServiceHelp(context,"iPadService.asmx", "loadData", PubData.class,true,"2");
+        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
+            @Override
+            public void onServiceCallBackString(boolean haveCallBack, String json) {
+                Gson gson = new Gson();
+                PayResponseBean payResponseBean = gson.fromJson(json, PayResponseBean.class);
+                String code = payResponseBean.getCode();
+                if (code.equals("00")) {
+                    Toast.makeText(context, "结算成功！", Toast.LENGTH_SHORT).show();
+                } else if(code.equals("99")){
+                    Toast.makeText(context, "重复结算！", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(context, "结算失败，未知错误！ code"+code, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+        mServiceHelp.start(resMap,context);
+    }
+
 }

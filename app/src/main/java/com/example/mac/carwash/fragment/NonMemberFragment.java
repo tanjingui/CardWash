@@ -32,7 +32,6 @@ import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
-import com.example.mac.carwash.jsonBean.PayResponseBean;
 import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo;
 import com.example.mac.carwash.main.order.UnMemberOrderAdapter;
 import com.example.mac.carwash.util.LicenseKeyboardUtil;
@@ -158,7 +157,6 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
                 if(!mReceiverTag){
                 mActivity.registerReceiver(receiver, finishFilter);mReceiverTag=true;}
                 linearLayout.setVisibility(View.INVISIBLE);
-                //mRecyclerView.setVisibility(View.INVISIBLE);
                 boxesContainer.setVisibility(View.VISIBLE);
                 keyboardUtil = new LicenseKeyboardUtil(getContext(),new EditText[]{inputbox1,inputbox2,inputbox3,
                         inputbox4,inputbox5,inputbox6,inputbox7});
@@ -171,7 +169,6 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
                 boxesContainer.setVisibility(View.GONE);
                 keyboardView.setVisibility(View.GONE);
                 linearLayout.setVisibility(View.VISIBLE);
-              //  mRecyclerView.setVisibility(View.VISIBLE);
                 break;
             case R.id.btn_close_input:
                 if(mReceiverTag){
@@ -186,7 +183,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 
 
     private void customDialog(final String carNum, int price) {
-        String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n确认提交？", carNum,price);
+        String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n确认开单？", carNum,price);
         final Dialog dialog = new Dialog(mActivity, R.style.NormalDialogStyle);
         View view = View.inflate(mActivity, R.layout.dialog_normal2, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
@@ -214,7 +211,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBillByCarNumRequest(carNum.substring(0,1),carNum.substring(1,carNum.length()));
+               openBillByCarNumRequest(carNum.substring(0,1),carNum.substring(1,carNum.length()));
                 dialog.dismiss();
             }
         });
@@ -249,7 +246,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 //洗车卡结算
-                //openPayForMemberRequest(1);
+                openBillByCarNumRequest(carNum.substring(0,1),carNum.substring(1,carNum.length()));
                 dialog.dismiss();
             }
         });
@@ -257,7 +254,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 //现金结算
-                //openPayForMemberRequest(2);
+                //openBillByCarNumRequest();
                 dialog.dismiss();
             }
         });
@@ -265,7 +262,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 //新办会员结算
-                //openPayForMemberRequest(3);
+                //openBillByCarNumRequest();
                 dialog.dismiss();
             }
         });
@@ -273,11 +270,9 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
         if(!mReceiverTag){
             mActivity.unregisterReceiver(receiver);
             mReceiverTag=false;
@@ -285,14 +280,11 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-
-
-
     /*-----------------------------------------查询非会员订单请求--------------------------------------------------*/;
     private void queryTodayNonMemberWarshCarRecords() {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("sqlKey",  "CS_XICHE_LISTV2");
+        resMap.put("store",UserInfoState.getSelectStoreCode());
         resMap.put("sqlType", "sql");
         WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadDataList", PubData.class,false,"2");
         mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
@@ -300,6 +292,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
             public void onServiceCallBackString(boolean haveCallBack, String json) {
                 Gson gson = new Gson();
                 UnmemberWarshCarRecordsInfo unmemberWarshCarRecordsInfo = gson.fromJson(json, UnmemberWarshCarRecordsInfo.class);
+                Log.i("zzzzzzzz",""+json);
                 UnMemberOrderAdapter adapter = new UnMemberOrderAdapter(unmemberWarshCarRecordsInfo.getData(),getContext());
                 mRecyclerView.setAdapter(adapter);
                 mRecyclerView.addItemDecoration(new RecycleViewDivider(
@@ -312,10 +305,16 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
 
 
 
+
+
+
+
+
     /*-----------------------------------------非会员开单请求--------------------------------------------------*/
     private void openBillByCarNumRequest(String province,String carmark) {
         Map<String, Object> resMap = new HashMap<String, Object>();
         resMap.put("province",  province);
+        resMap.put("store",UserInfoState.getSelectStoreCode());
         resMap.put("sqlKey", "CP_ADD_XICHE_ORDERV2");
         resMap.put("carmark", carmark);
         resMap.put("sqlType", "proc");
@@ -338,40 +337,6 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         });
         mServiceHelp.start(resMap,getActivity());
     }
-
-
-
-    /*-----------------------------------------结算请求--------------------------------------------------*/
-    private void openPayForMemberRequest(int OrderId,int PayWay) {
-        Map<String, Object> resMap = new HashMap<String, Object>();
-        resMap.put("sqlKey", "CP_SETTLEMENT_XICHE_ORDER");
-        resMap.put("settlementWay", PayWay);
-        resMap.put("bcid",OrderId);
-        resMap.put("sqlType", "proc");
-        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadData", PubData.class,true,"2");
-        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
-            @Override
-            public void onServiceCallBackString(boolean haveCallBack, String json) {
-                Gson gson = new Gson();
-                PayResponseBean payResponseBean = gson.fromJson(json, PayResponseBean.class);
-                String code = payResponseBean.getCode();
-                if (code.equals("00")) {
-                    Toast.makeText(getActivity(), "结算成功！", Toast.LENGTH_SHORT).show();
-                } else if(code.equals("99")){
-                    Toast.makeText(getActivity(), "重复结算！", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getActivity(), "结算失败，未知错误！ code"+code, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-        });
-        mServiceHelp.start(resMap,getActivity());
-    }
-
-
-
-
-
 
 
 

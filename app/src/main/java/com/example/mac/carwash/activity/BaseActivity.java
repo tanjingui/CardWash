@@ -102,8 +102,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
                 .setInActiveColor(R.color.black);//未选中
 
         mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.icon_shop_normal, "扫码洗车"))
-                .addItem(new BottomNavigationItem(R.drawable.icon_my_normal, "会员"))
-                .addItem(new BottomNavigationItem(R.drawable.icon_cart_normal, "非会员"))
+                .addItem(new BottomNavigationItem(R.drawable.icon_my_normal, "记录"))
+                .addItem(new BottomNavigationItem(R.drawable.icon_cart_normal, "输入车牌"))
                 //.setFirstSelectedPosition(1)  第一个默认呈现的item
                 .initialise();
 
