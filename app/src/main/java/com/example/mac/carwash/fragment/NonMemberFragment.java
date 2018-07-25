@@ -1,15 +1,11 @@
 package com.example.mac.carwash.fragment;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,8 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,18 +25,14 @@ import android.widget.Toast;
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.activity.BaseActivity;
 import com.example.mac.carwash.constants.UserInfoState;
+import com.example.mac.carwash.dataInterface.getDataInterface;
 import com.example.mac.carwash.jsonBean.OpenBillInfoBean;
-import com.example.mac.carwash.jsonBean.UnmemberWarshCarRecordsInfo;
-import com.example.mac.carwash.main.order.UnMemberOrderAdapter;
+import com.example.mac.carwash.main.record.NonmemberWashCarRecordsFragment;
 import com.example.mac.carwash.util.LicenseKeyboardUtil;
 import com.example.mac.carwash.util.ScreenSizeUtils;
-import com.example.mac.carwash.view.RecycleViewDivider;
 import com.example.mac.carwash.webservice.PubData;
 import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,25 +42,19 @@ import java.util.Map;
  * Created by mac on 2018/7/9.
  */
 
-public class NonMemberFragment extends Fragment implements View.OnClickListener{
+public class NonMemberFragment extends Fragment implements View.OnClickListener {
 
     private View view;
-    public static final String INPUT_LICENSE_COMPLETE = "com.example.mac.carwash.unmember.order";
-    public static final String INPUT_LICENSE_KEY = "LICENSE";
-    private RecyclerView mRecyclerView;
-    private RefreshLayout mRefreshLayout;
-    private LinearLayout linearLayout;
     private Spinner spinner;
+   private BaseActivity mActivity;
+    private LicenseKeyboardUtil keyboardUtil;
+    private FragmentManager mFragmentManager;
+    private FragmentTransaction transaction;
     private EditText inputbox1,inputbox2,
             inputbox3,inputbox4,
             inputbox5,inputbox6,inputbox7;
-    private LinearLayout boxesContainer;
-    private LicenseKeyboardUtil keyboardUtil;
-    private KeyboardView keyboardView;
-    private  BaseActivity mActivity;
-    private IntentFilter finishFilter;
-    //判断广播是否被注册
-    private boolean mReceiverTag = false;
+   // Button btn_openbill;
+   Button btn_paybill,btn_readRecords;
     public static NonMemberFragment newInstance() {
         NonMemberFragment fragment = new NonMemberFragment();
         return fragment;
@@ -79,36 +63,20 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.layout_interface_nonmember, container,false);
+        view = inflater.inflate(R.layout.layout_interface_nonmember2, container,false);
         init();
         return view;
     }
 
     public void init(){
-
-        spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
-        mActivity=(BaseActivity) getActivity();
-        linearLayout = (LinearLayout) view.findViewById(R.id.linear_unMember_info);
-        mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_unMember_info);
-        //初始化recyclerView
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mRefreshLayout =(RefreshLayout) view.findViewById(R.id.refreshLayout);
-
-        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                queryTodayNonMemberWarshCarRecords();
-
-            }
-        });
-
-        //加载更多
-        mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                refreshlayout.finishLoadmore();
-            } });
+        //mActivity = (BaseActivity)getActivity();
+//        btn_openbill = (Button) view.findViewById(R.id.btn1);
+        btn_paybill  = (Button) view.findViewById(R.id.btn2);
+        btn_readRecords  = (Button) view.findViewById(R.id.btn3);
+//        btn_openbill.setOnClickListener(this);
+        btn_paybill.setOnClickListener(this);
+        btn_readRecords.setOnClickListener(this);
+        mActivity = (BaseActivity)getActivity();
         inputbox1 = (EditText) view.findViewById(R.id.et_car_license_inputbox1);
         inputbox2 = (EditText) view.findViewById(R.id.et_car_license_inputbox2);
         inputbox3 = (EditText) view.findViewById(R.id.et_car_license_inputbox3);
@@ -116,65 +84,31 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         inputbox5 = (EditText) view.findViewById(R.id.et_car_license_inputbox5);
         inputbox6 = (EditText) view.findViewById(R.id.et_car_license_inputbox6);
         inputbox7 = (EditText) view.findViewById(R.id.et_car_license_inputbox7);
-        ImageView btn_close = (ImageView) view.findViewById(R.id.btn_close_input);
-        Button button = (Button) view.findViewById(R.id.btn_add_car);
-        Button btn_read_unmember_info = (Button)view.findViewById(R.id.btn_read_unmember_info);
-        button.setOnClickListener(this);
-        btn_close.setOnClickListener(this);
-        btn_read_unmember_info.setOnClickListener(this);
-//        mRecyclerView.setOnClickListener(this);
-        boxesContainer = (LinearLayout) view.findViewById(R.id.ll_car_license_inputbox_content);
-        keyboardView = (KeyboardView)view.findViewById(R.id.keyboard_view);
-        //输入车牌完成后的intent过滤器
-        finishFilter = new IntentFilter(INPUT_LICENSE_COMPLETE);
-        mActivity.registerReceiver(receiver, finishFilter);   mReceiverTag = true;//广播被注册
+        spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
+        KeyboardView keyboardView = (KeyboardView) view.findViewById(R.id.keyboard_view);
+             keyboardUtil = new LicenseKeyboardUtil(getContext(), new EditText[]{inputbox1, inputbox2, inputbox3,
+                     inputbox4, inputbox5, inputbox6, inputbox7}, keyboardView, new getDataInterface() {
+                 @Override
+                 public void callbackResult(String result) {
+                     NonMemberFragment.this.result = result;
+                     customDialog(result,50);
+                 }
+             });
         initToolBarSpinner();
     }
 
-    //当键盘输入完毕时候，activity接收到键盘输入的所有内容，则此次广播结束
-    //所以每次出来键盘时，要重新注册广播
-    final BroadcastReceiver receiver =  new  BroadcastReceiver() {
-        @Override
-        public   void  onReceive(Context context, Intent intent) {
-            String license = intent.getStringExtra(INPUT_LICENSE_KEY);
-            if(license != null && license.length() > 0){
-                boxesContainer.setVisibility(View.GONE);
-                if(keyboardUtil != null){
-                    keyboardUtil.hideKeyboard();
-                }
-                customDialog(license,50);
-            }
-            mActivity.unregisterReceiver(this);
-            mReceiverTag = false;
-        }
-    };
 
 
+
+
+   String result = "";
     @Override
     public void onClick(View v) {
         switch(v.getId()){
-            case R.id.btn_add_car:
-                if(!mReceiverTag){
-                mActivity.registerReceiver(receiver, finishFilter);mReceiverTag=true;}
-                linearLayout.setVisibility(View.INVISIBLE);
-                boxesContainer.setVisibility(View.VISIBLE);
-                keyboardUtil = new LicenseKeyboardUtil(getContext(),new EditText[]{inputbox1,inputbox2,inputbox3,
-                        inputbox4,inputbox5,inputbox6,inputbox7});
-                keyboardUtil.showKeyboard();
+            case R.id.btn2:
                 break;
-            case R.id.btn_read_unmember_info:
-                queryTodayNonMemberWarshCarRecords();
-                if(mReceiverTag){
-                mActivity.unregisterReceiver(receiver);mReceiverTag=false;}
-                boxesContainer.setVisibility(View.GONE);
-                keyboardView.setVisibility(View.GONE);
-                linearLayout.setVisibility(View.VISIBLE);
-                break;
-            case R.id.btn_close_input:
-                if(mReceiverTag){
-                    mActivity.unregisterReceiver(receiver);mReceiverTag=false;}
-                boxesContainer.setVisibility(View.GONE);
-                keyboardView.setVisibility(View.GONE);
+            case R.id.btn3:
+                addFragment(NonmemberWashCarRecordsFragment.newInstance(),"nonmemrecords");
                 break;
             default:
                 break;
@@ -182,6 +116,17 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    private void addFragment(Fragment fragment,String tag){
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        transaction = mFragmentManager.beginTransaction();
+        transaction.add(R.id.content,fragment,tag);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        transaction.hide(this);
+    }
+
+
+    //----------------------------------------------开单对话框----------------------------------------
     private void customDialog(final String carNum, int price) {
         String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n确认开单？", carNum,price);
         final Dialog dialog = new Dialog(mActivity, R.style.NormalDialogStyle);
@@ -204,7 +149,6 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                keyboardUtil = null;
                 dialog.dismiss();
             }
         });
@@ -219,89 +163,55 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-    private void customDialog2(final String carNum, int price) {
-        String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n请选择开单方式: ", carNum,price);
-        final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
-        View view = View.inflate(getActivity(), R.layout.dialog_normal3, null);
-        TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
-        TextView tv1 = (TextView) view.findViewById(R.id.btn_select1);
-        TextView tv2 = (TextView) view.findViewById(R.id.btn_select2);
-        TextView tv3 = (TextView) view.findViewById(R.id.btn_select3);
-        tv1.setText("洗车卡结算"); tv2.setText("现金结算"); tv3.setText("新办会员");
-        dialog_content.setText(Html.fromHtml(title));
-        dialog.setContentView(view);
-        //使得点击对话框外部不消失对话框
-        dialog.setCanceledOnTouchOutside(false);
-        //设置对话框的大小
-        view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(getActivity()).getScreenHeight() * 0.23f));
-        Window dialogWindow = dialog.getWindow();
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.width = (int) (ScreenSizeUtils.getInstance(getActivity()).getScreenWidth() * 0.75f);
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.gravity = Gravity.CENTER;
-        dialogWindow.setAttributes(lp);
-        //订单的价格变动需要谨慎处理  需考虑到各种突发情况
-        tv1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //洗车卡结算
-                openBillByCarNumRequest(carNum.substring(0,1),carNum.substring(1,carNum.length()));
-                dialog.dismiss();
-            }
-        });
-        tv2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //现金结算
-                //openBillByCarNumRequest();
-                dialog.dismiss();
-            }
-        });
-        tv3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //新办会员结算
-                //openBillByCarNumRequest();
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
+//----------------------------------------------结算对话框----------------------------------------
+//    private void customDialog2(final String carNum, int price) {
+//        String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n请选择结算方式: ", carNum,price);
+//        final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
+//        View view = View.inflate(getActivity(), R.layout.dialog_normal3, null);
+//        TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
+//        TextView tv1 = (TextView) view.findViewById(R.id.btn_select1);
+//        TextView tv2 = (TextView) view.findViewById(R.id.btn_select2);
+//        TextView tv3 = (TextView) view.findViewById(R.id.btn_select3);
+//        tv1.setText("洗车卡结算"); tv2.setText("现金结算"); tv3.setText("新办会员");
+//        dialog_content.setText(Html.fromHtml(title));
+//        dialog.setContentView(view);
+//        //使得点击对话框外部不消失对话框
+//        dialog.setCanceledOnTouchOutside(false);
+//        //设置对话框的大小
+//        view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(getActivity()).getScreenHeight() * 0.23f));
+//        Window dialogWindow = dialog.getWindow();
+//        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+//        lp.width = (int) (ScreenSizeUtils.getInstance(getActivity()).getScreenWidth() * 0.75f);
+//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//        lp.gravity = Gravity.CENTER;
+//        dialogWindow.setAttributes(lp);
+//        //订单的价格变动需要谨慎处理  需考虑到各种突发情况
+//        tv1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //洗车卡结算
+//                dialog.dismiss();
+//            }
+//        });
+//        tv2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //现金结算
+//                dialog.dismiss();
+//            }
+//        });
+//        tv3.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //新办会员结算
+//                dialog.dismiss();
+//            }
+//        });
+//        dialog.show();
+//    }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(!mReceiverTag){
-            mActivity.unregisterReceiver(receiver);
-            mReceiverTag=false;
-        }
-    }
 
-
-    /*-----------------------------------------查询非会员订单请求--------------------------------------------------*/;
-    private void queryTodayNonMemberWarshCarRecords() {
-        Map<String, Object> resMap = new HashMap<String, Object>();
-        resMap.put("sqlKey",  "CS_XICHE_LISTV2");
-        resMap.put("store",UserInfoState.getSelectStoreCode());
-        resMap.put("sqlType", "sql");
-        WebServiceHelp mServiceHelp = new WebServiceHelp(getActivity(),"iPadService.asmx", "loadDataList", PubData.class,false,"2");
-        mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
-            @Override
-            public void onServiceCallBackString(boolean haveCallBack, String json) {
-                Gson gson = new Gson();
-                UnmemberWarshCarRecordsInfo unmemberWarshCarRecordsInfo = gson.fromJson(json, UnmemberWarshCarRecordsInfo.class);
-                Log.i("zzzzzzzz",""+json);
-                UnMemberOrderAdapter adapter = new UnMemberOrderAdapter(unmemberWarshCarRecordsInfo.getData(),getContext());
-                mRecyclerView.setAdapter(adapter);
-                mRecyclerView.addItemDecoration(new RecycleViewDivider(
-                        view.getContext(), LinearLayoutManager.VERTICAL, 12, getResources().getColor(R.color.black)));
-                mRefreshLayout.finishRefresh();
-            }
-        });
-        mServiceHelp.start(resMap,getActivity());
-    }
 
 
 

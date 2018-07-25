@@ -189,11 +189,5 @@ public class MemberActivity extends FragmentActivity {
     }
 
 
-    public void initView(){
-
-    }
-
-
-
 
 }

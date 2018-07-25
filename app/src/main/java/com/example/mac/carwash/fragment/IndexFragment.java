@@ -368,6 +368,7 @@ public class IndexFragment extends Fragment  {
         if(!checkState()) return;
         Map<String, Object> resMap = new HashMap<>();
         resMap.put("SETTLEMENTID", customerInfoBean.getData().getId()); //结算的id  这个是用户id
+        resMap.put("store",UserInfoState.getSelectStoreCode());
         resMap.put("PRICE", customerInfoBean.getData().getOFEE()+"");
         resMap.put("sqlType", "proc");
         resMap.put("PROID", "900.0");

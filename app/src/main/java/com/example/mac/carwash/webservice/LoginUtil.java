@@ -4,11 +4,9 @@ import android.content.Context;
 
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.constants.InterfaceDefinition;
-import com.example.mac.carwash.constants.UserInfoState;
-import com.example.mac.carwash.jsonBean.UserInfoBean;
+import com.example.mac.carwash.util.APKVersionCodeUtils;
 import com.example.mac.carwash.util.PreferencesUtil;
 import com.example.mac.carwash.util.StringUtil;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,7 +50,7 @@ public class LoginUtil {
         map.put("deviceId",  StringUtil.getDeviceId(context));
         map.put("DEVICETYPE", StringUtil.getDeviceType());
         map.put("OSVERSION", StringUtil.getOsVersion());
-        map.put("CLIENTVERSIONCODE", context.getString(R.string.versionCode));
+        map.put("CLIENTVERSIONCODE", APKVersionCodeUtils.getVersionCode(context) + "");
         map.put("VERSIONSTYLE", versionType);
         map.put("VERSIONTYPE", "apk");
         map.put("VERSIONNAME", context.getString(R.string.app_name));
@@ -60,13 +58,6 @@ public class LoginUtil {
         webServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
-
-                //这里我先随便解析 保存一下  改进会用到sharePerfences 等等 再考虑
-                Gson gson = new Gson();
-                UserInfoBean userInfoBean = gson.fromJson(json,UserInfoBean.class);
-                UserInfoState.setUserName(userInfoBean.getData().getUSERINFO().get(0).getUSER_name()+"");
-                UserInfoState.setPOSITION(userInfoBean.getData().getUSERINFO().get(0).getPOSITION()+"");
-
                 removeUserInfo();
                 JSONObject obj = JsonUtil.toJsonObject(json);
                 int code = obj.optInt("code");
@@ -76,7 +67,7 @@ public class LoginUtil {
                     JSONArray gafSession = JsonUtil.toJsonArray(data.optString("GafSession"));
                     JSONObject dg1 = userInfo.optJSONObject(0);
                     JSONObject dg2 = gafSession.optJSONObject(0);
-
+                    PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_loginname, dg1.optString("LOGIN_NAME"));           // 存登录账号.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.SESSIONID,obj.optString("sessionId"));      // 存SessionId.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_ID, dg2.optString("USER_ID"));                      // 存登录账号.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_name, dg1.optString("USER_name"));                      // 存登录账号.
@@ -84,6 +75,7 @@ public class LoginUtil {
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.Photo,dg1.optString("LOGOIMG"));                           // 存登录状态.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.POSITION, dg1.optString("POSITION"));               // 存真实姓名.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.CompanyName, dg2.optString("COMNAME"));           // 存主车牌号码.
+
                     if (null != loginInterface) {
                         loginInterface.callbackResult(code, context.getString(R.string.login_message_text4));
                     }

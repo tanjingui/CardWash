@@ -11,7 +11,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mac.carwash.R;
+import com.example.mac.carwash.constants.InterfaceDefinition;
 import com.example.mac.carwash.main.update.UpdateManager;
+import com.example.mac.carwash.util.PreferencesUtil;
 import com.example.mac.carwash.util.StringUtil;
 import com.example.mac.carwash.util.WeiboDialogUtils;
 import com.example.mac.carwash.webservice.JsonUtil;
@@ -58,15 +60,16 @@ public class LoginActivity extends AppCompatActivity{
         mServiceHelp = new WebServiceHelp(LoginActivity.this,"iNoSService.asmx", "loadData", PubData.class,false,"0");
         mBtnLogin = (Button) findViewById(R.id.btn_load);
         mUsername = (EditText)findViewById(R.id.edit_userAccount);
+        mUsername.setText((String) PreferencesUtil.get(this, InterfaceDefinition.PreferencesUser.USER_loginname,""));
         mPassword = (EditText)findViewById(R.id.edit_password);
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(mUsername.getText().toString().equals("")||mPassword.getText().toString().equals("")){
-//                    Toast.makeText(LoginActivity.this,"请填写账号密码！",Toast.LENGTH_SHORT).show();return;
-//                }else{
+                if(mUsername.getText().toString().equals("")||mPassword.getText().toString().equals("")){
+                    Toast.makeText(LoginActivity.this,"请填写账号密码！",Toast.LENGTH_SHORT).show();return;
+                }else{
                       submitRequest();
-//                }
+                }
             }
         });
     }
@@ -97,7 +100,7 @@ public class LoginActivity extends AppCompatActivity{
                     Toast.makeText(LoginActivity.this,""+stateName,Toast.LENGTH_SHORT).show();
                 }
             }
-        },"sx001","1996tjg",LoginActivity.this,"1", mServiceHelp);
+        },mUsername.getText().toString(),mPassword.getText().toString(),LoginActivity.this,"1", mServiceHelp);
         loginUtil.startLogin(true);
     }
 

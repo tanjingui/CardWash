@@ -18,6 +18,8 @@ public class InterfaceDefinition {
 
 		public static final String USER_ID = "USER_ID";				// 账号ID.
 
+		public static final String USER_loginname="USER_loginname"; //登录的账号
+
 		public static final String USER_name = "USER_name";			// 账户ID.
 
 		public static final String TERMINAL_CODE = "TERMINAL_CODE"; 				// 账户ID.

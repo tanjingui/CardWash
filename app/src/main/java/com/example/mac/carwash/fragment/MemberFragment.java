@@ -250,6 +250,8 @@ public class MemberFragment extends Fragment {
                 UserInfoState.setSelectStoreCode(new ArrayList<String>(UserInfoState.getStoreMap().values()).get(position));
                 //设置显示当前选择的项
                 parent.setVisibility(View.VISIBLE);
+                //-------选择后 刷新订单记录-------
+                mFragmentA.refreshView();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}

@@ -30,7 +30,7 @@ public class DataUtil {
 //    public static String URL = "http://192.168.0.110:8080/cetc/";
 
     //java内网（华总）
-    public static String URL = "http://192.168.0.193:8080/cetc/";
+    public static String URL = "http://192.168.0.115:8080/cetc/";
 
     //java内网(蔡哥)
 //    public static String URL = "http://192.168.0.110:8282/cetc/";

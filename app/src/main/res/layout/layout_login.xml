@@ -60,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10.0dip"
                 android:layout_marginRight="30.0dip"
+                android:inputType="textPassword"
                 android:background="@null"
                 android:hint="密码"
                 android:singleLine="true"

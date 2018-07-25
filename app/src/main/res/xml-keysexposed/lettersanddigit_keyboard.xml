@@ -139,11 +139,11 @@
             android:keyLabel="M"
             />
         <Key
-            android:codes="112"
-            android:keyWidth="50sp"
-            android:isRepeatable="true"
-            android:keyIcon="@drawable/icon_delete"
-            />
+        android:codes="112"
+        android:keyWidth="50sp"
+        android:isRepeatable="true"
+        android:keyIcon="@drawable/icon_delete"
+        />
         <Key
             android:codes="66"
             android:keyWidth="60sp"

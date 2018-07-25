@@ -33,7 +33,8 @@ public class AllOrderFragment extends Fragment {
 	private RefreshLayout mRefreshLayout;
 	private FragmentActivity mActivity;
 
-//-------------------------刷新变量----------------------------------------
+
+	//-------------------------刷新变量----------------------------------------
 	MemberOrderAdapter mMemberOrderAdapter;
 	Boolean flag = true;  //是否初次加载
 	Boolean hasNextPage = true;  //是否有下一页
@@ -49,9 +50,16 @@ public class AllOrderFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
-		mActivity = getActivity();
-		view = inflater.inflate(R.layout.viewpaper_tab1, container,false);
-		init();
+		if (null != view) {
+			ViewGroup parent = (ViewGroup) view.getParent();
+			if (null != parent) {
+				parent.removeView(view);
+			}
+		} else {
+			mActivity = getActivity();
+			view = inflater.inflate(R.layout.viewpaper_tab1, container,false);
+			init();;// 控件初始化
+		}
 		return view;
 	}
 
@@ -95,8 +103,11 @@ public class AllOrderFragment extends Fragment {
 		currentPage=1;
 	}
 
-
-
+    //用户点击spinner后执行刷新操作
+    public void refreshView(){
+		currentPage = 1;
+		queryTodayAllMemberWarshCarRecords(0);
+	}
 
 
 

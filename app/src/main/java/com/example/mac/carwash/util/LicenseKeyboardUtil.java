@@ -1,16 +1,13 @@
 package com.example.mac.carwash.util;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import com.example.mac.carwash.dataInterface.getDataInterface;
 import com.example.mac.carwash.R;
-import com.example.mac.carwash.main.order.MainActivity;
 
 
 /**
@@ -21,19 +18,21 @@ public class LicenseKeyboardUtil {
     private KeyboardView keyboardView;
     private Keyboard k1;// 省份简称键盘
     private Keyboard k2;// 数字字母键盘
-
     private String provinceShort[];
     private String letterAndDigit[];
-
     private EditText edits[];
     private int currentEditText = 0;//默认当前光标在第一个EditText
 
-    public LicenseKeyboardUtil(Context ctx, EditText edits[]) {
+    private getDataInterface getDataInterface;
+
+    public LicenseKeyboardUtil(Context ctx, EditText edits[],KeyboardView keyboardView,getDataInterface getDataInterface) {
+        this.getDataInterface = getDataInterface;
         this.ctx = ctx;
         this.edits = edits;
+        this.keyboardView = keyboardView;
         k1 = new Keyboard(ctx, R.xml.province_short_keyboard);
         k2 = new Keyboard(ctx, R.xml.lettersanddigit_keyboard);
-        keyboardView = (KeyboardView) ((Activity)ctx).findViewById(R.id.keyboard_view);
+        //keyboardView = (KeyboardView) ((Activity)ctx).findViewById(R.id.keyboard_view);
         keyboardView.setKeyboard(k1);
         keyboardView.setEnabled(true);
         //设置为true时,当按下一个按键时会有一个popup来显示<key>元素设置的android:popupCharacters=""
@@ -51,6 +50,7 @@ public class LicenseKeyboardUtil {
                 , "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"
                 , "A", "S", "D", "F", "G", "H", "J", "K", "L"
                 , "Z", "X", "C", "V", "B", "N", "M"};
+
     }
 
     private OnKeyboardActionListener listener = new OnKeyboardActionListener() {
@@ -81,6 +81,7 @@ public class LicenseKeyboardUtil {
 
         @Override
         public void onPress(int primaryCode) {
+        //    LicenseKeyboardUtil.this.showKeyboard();
         }
 
         //currenEditText 是即将要输入的位置
@@ -95,25 +96,15 @@ public class LicenseKeyboardUtil {
                     setAllEditToNULL();
                     keyboardView.setKeyboard(k1);
                 }
-   //             Toast.makeText(ctx,"222"+currentEditText,Toast.LENGTH_SHORT).show();
-//                edits[currentEditText].setText("");//将当前EditText置为""并currentEditText-1
-//                currentEditText--;
-//                if(currentEditText < 1){
-//                    //切换为省份简称键盘
-//                    keyboardView.setKeyboard(k1);
-//                }
-//                if(currentEditText < 0){
-//                    currentEditText = 0;
-//                }
             }else if(primaryCode == 66){ //xml中定义的完成键值为66
-                Intent intent = new Intent();
-                String license = "";
-                for (int i=0;i<7;i++){
-                    license += edits[i].getText().toString();
+                if(edits[6].getText().toString().equals("")){
+                    Toast.makeText(ctx,"请输入完成的车牌号！",Toast.LENGTH_SHORT).show();return;
                 }
-                intent.putExtra(MainActivity.INPUT_LICENSE_KEY, license);
-                intent.setAction(MainActivity.INPUT_LICENSE_COMPLETE);
-                ctx.sendBroadcast(intent);
+                String result="";
+                for (int i=0;i<7;i++){
+                    result += edits[i].getText().toString();
+                }
+                getDataInterface.callbackResult(result);
             }else { //其它字符按键
                 if (currentEditText == 0) {
                     //如果currentEditText==0代表当前为省份键盘,
@@ -127,7 +118,7 @@ public class LicenseKeyboardUtil {
                 }else{
                     //第二位必须大写字母
                     if(currentEditText == 1 && !letterAndDigit[primaryCode].matches("[A-Z]{1}")){
-                        Toast.makeText(ctx,"第二位请大写",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx,"第二位请填字母",Toast.LENGTH_SHORT).show();
                         return ;
                     }
                     edits[currentEditText].setText(letterAndDigit[primaryCode]);
