@@ -194,54 +194,8 @@ public class IndexFragment extends Fragment  {
         dialog.show();
     }
 
-//    private void customDialog2(String price) {
-//        String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认结算？", price);
-//        final Dialog dialog = new Dialog(activity, R.style.NormalDialogStyle);
-//        View view = View.inflate(activity, R.layout.dialog_normal3, null);
-//        TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
-//        TextView tv1 = (TextView) view.findViewById(R.id.btn_select1);
-//        TextView tv2 = (TextView) view.findViewById(R.id.btn_select2);
-//        TextView tv3 = (TextView) view.findViewById(R.id.btn_select3);
-//        tv1.setText("会员卡结算"); tv2.setText("洗车卡结算"); tv3.setText("现金结算");
-//        dialog_content.setText(Html.fromHtml(title));
-//        dialog.setContentView(view);
-//        //使得点击对话框外部不消失对话框
-//        dialog.setCanceledOnTouchOutside(false);
-//        //设置对话框的大小
-//        view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(activity).getScreenHeight() * 0.23f));
-//        Window dialogWindow = dialog.getWindow();
-//        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-//        lp.width = (int) (ScreenSizeUtils.getInstance(activity).getScreenWidth() * 0.75f);
-//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//        lp.gravity = Gravity.CENTER;
-//        dialogWindow.setAttributes(lp);
-//        //订单的价格变动需要谨慎处理  需考虑到各种突发情况
-//        tv1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //会员卡结算
-//                openPayForMemberRequest(0);
-//                dialog.dismiss();
-//            }
-//        });
-//        tv2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //洗车卡结算
-//                openPayForMemberRequest(1);
-//                dialog.dismiss();
-//            }
-//        });
-//        tv3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //现金结算
-//                openPayForMemberRequest(2);
-//                dialog.dismiss();
-//            }
-//        });
-//        dialog.show();
-//    }
+
+
 
     public void initToolBarSpinner(){
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, new ArrayList<String>(UserInfoState.getStoreMap().keySet()));

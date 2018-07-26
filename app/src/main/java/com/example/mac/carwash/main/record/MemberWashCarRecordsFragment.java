@@ -1,5 +1,6 @@
 package com.example.mac.carwash.main.record;
 
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
@@ -28,11 +31,14 @@ public class MemberWashCarRecordsFragment extends Fragment{
     private View view;
     RecyclerView rv_washRecords;
     Button btn_back;
-    BottomNavigationBar mBottombar;
     private String customerId;
     private String qrCode;
     private MemberRecordsAdapter mWashCarMemberRecordsAdapter;
     private BottomNavigationBar mBottomNavigationBar;
+    //-------数据加载时动画--------
+    AnimationDrawable mAnimation;
+    ImageView mImageView;
+    LinearLayout loadingLayout;
     public static MemberWashCarRecordsFragment newInstance(String settlementId,String qrCode) {
         Bundle args = new Bundle();
         args.putString("customerId",settlementId);
@@ -45,7 +51,7 @@ public class MemberWashCarRecordsFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.layout_warshcard_inputcarnum_records, null);
+        view = inflater.inflate(R.layout.layout_warshcard_records, null);
         init();
        queryMemberHistoryWarshCarRecords();
         return view;
@@ -59,6 +65,7 @@ public class MemberWashCarRecordsFragment extends Fragment{
     }
 
     public void init(){
+        startLoadingAnim();
         Bundle args = getArguments();
         customerId = args.getString("customerId");
         qrCode = args.getString("qrCode");
@@ -78,6 +85,31 @@ public class MemberWashCarRecordsFragment extends Fragment{
 
 
 
+
+    //-------启动动画-------
+    public void startLoadingAnim(){
+        mImageView = (ImageView) view.findViewById(R.id.loadingIv);
+        loadingLayout = (LinearLayout)view.findViewById(R.id.anim_loading);
+        mImageView.setBackgroundResource(R.drawable.frame_tyre);
+        mAnimation = (AnimationDrawable) mImageView.getBackground();
+        mImageView.post(new Runnable() {
+            @Override
+            public void run() {
+                mAnimation.start();
+            }
+        });
+    }
+    //-------结束动画-------
+    public void stopLoadingAnim(){
+        mAnimation.stop();
+        loadingLayout.setVisibility(View.GONE);
+    }
+
+
+
+
+
+
     	/*-----------------------------查询当天特定会员用户订单记录--------------------------------------------------*/
         private void queryMemberHistoryWarshCarRecords() {
             Map<String, Object> resMap = new HashMap<>();
@@ -89,6 +121,7 @@ public class MemberWashCarRecordsFragment extends Fragment{
             mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
                 @Override
                 public void onServiceCallBackString(boolean haveCallBack, String json) {
+                    stopLoadingAnim();
                     Gson gson = new Gson();
                     MemberWarshCarRecordsBean memberWarshCarRecordsBean = gson.fromJson(json, MemberWarshCarRecordsBean.class);
                     if(memberWarshCarRecordsBean.getCode().equals("01")){
