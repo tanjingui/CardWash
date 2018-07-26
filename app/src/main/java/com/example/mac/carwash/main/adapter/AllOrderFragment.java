@@ -39,7 +39,7 @@ public class AllOrderFragment extends Fragment {
 	Boolean flag = true;  //是否初次加载
 	Boolean hasNextPage = true;  //是否有下一页
 	int currentPage = 1;   //  请求server 需+1
-
+    int allRecordsCount=-1; //解决只有一条记录的bug
 
 	public static AllOrderFragment newInstance() {
 		AllOrderFragment fragment = new AllOrderFragment();
@@ -84,7 +84,7 @@ public class AllOrderFragment extends Fragment {
 		 mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
 		 @Override
 		 public void onLoadmore(RefreshLayout refreshlayout) {
-			 if(hasNextPage==false){	Toast.makeText(mActivity,"下拉没有更多数据了！",Toast.LENGTH_SHORT).show();mRefreshLayout.finishLoadmore();return; }
+			 if(hasNextPage==false||((allRecordsCount<= onceLoadingRecordsCount)&&allRecordsCount!=-1)){	Toast.makeText(mActivity,"下拉没有更多数据了！",Toast.LENGTH_SHORT).show();mRefreshLayout.finishLoadmore();return; }
 			 queryTodayAllMemberWarshCarRecords(1);
 		 } });
 	}
@@ -111,8 +111,8 @@ public class AllOrderFragment extends Fragment {
 
 
 
-
-	/*-----------------------------查询当天所有会员用户订单记录--------------------------------------------------*/
+     final int onceLoadingRecordsCount = 3;  //一次拉取的订单信息条数
+	/*----------------------------查询当天所有会员用户订单记录--------------------------------------------------*/
 	private void queryTodayAllMemberWarshCarRecords(final int operation) {
 		Map<String, Object> resMap = new HashMap<>();
 		resMap.put("sqlKey",  "CS_XICHE_LIST");
@@ -121,7 +121,7 @@ public class AllOrderFragment extends Fragment {
 		resMap.put("sqlType", "sql");
 		Map<String,Object>page = new HashMap<>();
 		page.put("currentPage",currentPage);
-		page.put("pageRecordCount",3); //数据库查询到的总数/7  然后选择要查看第几页
+		page.put("pageRecordCount", onceLoadingRecordsCount); //数据库查询到的总数/3  然后选择要查看第几页
 		resMap.put("page",page);
 		WebServiceHelp mServiceHelp = new WebServiceHelp(mActivity,"iPadService.asmx", "loadDataList", PubData.class,flag,"2");
 		mServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
@@ -129,11 +129,13 @@ public class AllOrderFragment extends Fragment {
 			public void onServiceCallBackString(boolean haveCallBack, String json) {
 				Log.i("uuu服务器返回所有当天会员用户洗车信息：：",""+json);
 				Gson gson = new Gson();
-				MemberWarshCarRecordsInfo memberWarshCarRecordsInfo = gson.fromJson(json, MemberWarshCarRecordsInfo.class);
+                MemberWarshCarRecordsInfo memberWarshCarRecordsInfo = gson.fromJson(json, MemberWarshCarRecordsInfo.class);
+
 				if(memberWarshCarRecordsInfo.getCode().equals("01")){
 					if(mMemberOrderAdapter!=null) mMemberOrderAdapter.clearAll();
 					Toast.makeText(mActivity,"没有数据！",Toast.LENGTH_SHORT).show(); if(operation==0){mRefreshLayout.finishRefresh();}else if(operation==1){mRefreshLayout.finishLoadmore();}  reset(); return;
 				}else if(memberWarshCarRecordsInfo.getCode().equals("00")){
+					allRecordsCount = memberWarshCarRecordsInfo.getPage().getAllRecordCount();
                      if(memberWarshCarRecordsInfo.getPage().getHasNextPage()==false){
 						 hasNextPage = false;
 					 }

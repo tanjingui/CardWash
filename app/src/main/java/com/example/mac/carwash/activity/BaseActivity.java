@@ -24,6 +24,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mac.carwash.R;
+import com.example.mac.carwash.constants.InterfaceDefinition;
 import com.example.mac.carwash.constants.UserInfoState;
 import com.example.mac.carwash.dataInterface.getDataInterface;
 import com.example.mac.carwash.fragment.IndexFragment;
@@ -31,6 +32,7 @@ import com.example.mac.carwash.fragment.MemberFragment;
 import com.example.mac.carwash.fragment.NonMemberFragment;
 import com.example.mac.carwash.jsonBean.CustomerInfoBean;
 import com.example.mac.carwash.jsonBean.StoreInfoBean;
+import com.example.mac.carwash.util.PreferencesUtil;
 import com.example.mac.carwash.view.BottomPopupOption;
 import com.example.mac.carwash.webservice.PubDataList;
 import com.example.mac.carwash.webservice.WebServiceHelp;
@@ -70,7 +72,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                     tv_orderPrice = (TextView)indexFragment.getView().findViewById(R.id.tv_info_order_price);
                     tv_banl = (TextView)indexFragment.getView().findViewById(R.id.tv_info_banlance);
                     tv_amt = (TextView)indexFragment.getView().findViewById(R.id.tv_info_remain);
-                    tv_name.setText(data.getOwner());tv_level.setText(data.getOTYPE());tv_carNum.setText(data.getOCARMARK());tv_orderPrice.setText(data.getOFEE()+"");tv_banl.setText(data.getOBALANCE()+"");tv_amt.setText(data.getDiscount()+"");
+                    tv_name.setText(data.getOwner());tv_level.setText(data.getOTYPE());tv_carNum.setText(data.getOCARMARK());tv_orderPrice.setText(data.getOFEE()+"元");tv_banl.setText(data.getOBALANCE()+"元");tv_amt.setText(data.getDiscount()+"次");
                     break;
                 default:
                     break;
@@ -145,10 +147,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
         CircleImageView headerView = (CircleImageView)navigationView.getHeaderView(0).findViewById(R.id.circleImage_avator);
         TextView tv1 = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_name);
         TextView tv2 = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_post);
-        tv1.setText(UserInfoState.getUserName()+"");
-        tv2.setText(UserInfoState.getPOSITION()+"");
+        tv1.setText((String) PreferencesUtil.get(this, InterfaceDefinition.PreferencesUser.USER_name,""));
+        tv2.setText((String) PreferencesUtil.get(this, InterfaceDefinition.PreferencesUser.POSITION,""));
         Glide.with(this)
-                .load(UserInfoState.getURL()+UserInfoState.getLOGOIMG())
+                .load((String) PreferencesUtil.get(this, InterfaceDefinition.PreferencesUser.URL,"")+ PreferencesUtil.get(this, InterfaceDefinition.PreferencesUser.Photo,""))
                 .error(R.mipmap.default_avator)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .dontAnimate()
@@ -256,12 +258,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
         handler.sendMessage(msg);
     }
 
-
+    //记录用户首次点击返回键的时间
+    private long firstTime=0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                return false;//拦截事件
+                long secondTime=System.currentTimeMillis();
+                if(secondTime-firstTime>2000){
+                    Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
+                    firstTime=secondTime;
+                    return true;
+                }else{
+                    System.exit(0);
+                }
+                break;
             default:
                 break;
         }

@@ -31,7 +31,7 @@
 
             <EditText
                 android:id="@+id/edit_userAccount"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="10.0dip"
@@ -41,7 +41,7 @@
                 android:hint="请输入账号"
                 android:singleLine="true"
                 android:textColor="#000000"
-                android:textSize="15.0sp" />
+                android:textSize="17.0sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -56,7 +56,7 @@
 
             <EditText
                 android:id="@+id/edit_password"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10.0dip"
                 android:layout_marginRight="30.0dip"
@@ -64,7 +64,7 @@
                 android:background="@null"
                 android:hint="密码"
                 android:singleLine="true"
-                android:textSize="15.0sp" />
+                android:textSize="17.0sp" />
 
             <ImageView
                 android:id="@+id/img_eye"

@@ -8,8 +8,9 @@
     android:orientation="vertical"
     app:left_spi_visible="true"
     app:left_tv_visible="false"
-    app:right_btn_visible="true"
-    app:right_btn_src="@drawable/icon_notes"
+    app:right_btn_visible="false"
+    app:right_tv_visible="true"
+    app:right_tv_text="记录"
     app:title_visible="true"
     app:title_text="扫码洗车">
 
@@ -171,7 +172,7 @@
                 android:layout_margin="6dp"
                 android:layout_weight="0.3"
                 android:gravity="right|center"
-                android:text="剩余次数:"
+                android:text="本周剩余:"
                 android:textColor="@color/grey"
                 android:textSize="15sp" />
 
@@ -211,13 +212,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
             <Button
-                android:id="@+id/btn_pay"
+                android:id="@+id/btn_QRCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_shape1"
                 android:gravity="center"
                 android:layout_marginRight="30dp"
-                android:text="结算"
+                android:text="扫码"
                 android:textColor="@drawable/btn_font_style"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -226,24 +227,24 @@
         </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:gravity="center">
-            <Button
-                android:id="@+id/btn_QRCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_shape2"
-                android:gravity="center"
-                android:text="扫码"
-                android:textColor="@drawable/btn_font_style"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+        <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:gravity="center">-->
+            <!--<Button-->
+                <!--android:id="@+id/btn_QRCode"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_shape2"-->
+                <!--android:gravity="center"-->
+                <!--android:text="扫码"-->
+                <!--android:textColor="@drawable/btn_font_style"-->
+                <!--android:textSize="20sp"-->
+                <!--android:textStyle="bold" />-->
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 </com.example.mac.carwash.view.CustomToolBar>

@@ -63,12 +63,12 @@
         <Key
             android:codes="16"
             android:keyLabel="U" />
-        <Key
-            android:codes="17"
-            android:keyLabel="I" />
-        <Key
-            android:codes="18"
-            android:keyLabel="O" />
+        <!--<Key-->
+            <!--android:codes="17"-->
+            <!--android:keyLabel="I" />-->
+        <!--<Key-->
+            <!--android:codes="18"-->
+            <!--android:keyLabel="O" />-->
         <Key
             android:codes="19"
             android:keyEdgeFlags="right"

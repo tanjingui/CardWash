@@ -58,6 +58,7 @@ public class LoginUtil {
         webServiceHelp.setOnServiceCallBackString(new WebServiceHelp.OnServiceCallBackString<String>() {
             @Override
             public void onServiceCallBackString(boolean haveCallBack, String json) {
+
                 removeUserInfo();
                 JSONObject obj = JsonUtil.toJsonObject(json);
                 int code = obj.optInt("code");
@@ -67,7 +68,6 @@ public class LoginUtil {
                     JSONArray gafSession = JsonUtil.toJsonArray(data.optString("GafSession"));
                     JSONObject dg1 = userInfo.optJSONObject(0);
                     JSONObject dg2 = gafSession.optJSONObject(0);
-                    PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_loginname, dg1.optString("LOGIN_NAME"));           // 存登录账号.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.SESSIONID,obj.optString("sessionId"));      // 存SessionId.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_ID, dg2.optString("USER_ID"));                      // 存登录账号.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_name, dg1.optString("USER_name"));                      // 存登录账号.
@@ -75,7 +75,9 @@ public class LoginUtil {
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.Photo,dg1.optString("LOGOIMG"));                           // 存登录状态.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.POSITION, dg1.optString("POSITION"));               // 存真实姓名.
                     PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.CompanyName, dg2.optString("COMNAME"));           // 存主车牌号码.
-
+                    //补充
+                    PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_loginname, dg1.optString("LOGIN_NAME"));  // 存登录账号.
+                    PreferencesUtil.put(context,InterfaceDefinition.PreferencesUser.DEPTNAME,dg1.optString("DEPTNAME"));      //存所属部门
                     if (null != loginInterface) {
                         loginInterface.callbackResult(code, context.getString(R.string.login_message_text4));
                     }
@@ -134,5 +136,11 @@ public class LoginUtil {
         PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.Photo,"");
         PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.POSITION,"");
         PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.TERMINAL_CODE,"");
+        //补充
+        PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.DEPTNAME,"");
+        PreferencesUtil.put(context, InterfaceDefinition.PreferencesUser.USER_loginname,"");
+
     }
+
+
 }

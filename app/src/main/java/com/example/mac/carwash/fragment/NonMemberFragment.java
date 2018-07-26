@@ -16,7 +16,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -53,8 +52,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener 
     private EditText inputbox1,inputbox2,
             inputbox3,inputbox4,
             inputbox5,inputbox6,inputbox7;
-   // Button btn_openbill;
-   Button btn_paybill,btn_readRecords;
+    private TextView tv_readRecords;
     public static NonMemberFragment newInstance() {
         NonMemberFragment fragment = new NonMemberFragment();
         return fragment;
@@ -63,19 +61,12 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.layout_interface_nonmember2, container,false);
+        view = inflater.inflate(R.layout.layout_interface_nonmember, container,false);
         init();
         return view;
     }
 
     public void init(){
-        //mActivity = (BaseActivity)getActivity();
-//        btn_openbill = (Button) view.findViewById(R.id.btn1);
-        btn_paybill  = (Button) view.findViewById(R.id.btn2);
-        btn_readRecords  = (Button) view.findViewById(R.id.btn3);
-//        btn_openbill.setOnClickListener(this);
-        btn_paybill.setOnClickListener(this);
-        btn_readRecords.setOnClickListener(this);
         mActivity = (BaseActivity)getActivity();
         inputbox1 = (EditText) view.findViewById(R.id.et_car_license_inputbox1);
         inputbox2 = (EditText) view.findViewById(R.id.et_car_license_inputbox2);
@@ -85,6 +76,9 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener 
         inputbox6 = (EditText) view.findViewById(R.id.et_car_license_inputbox6);
         inputbox7 = (EditText) view.findViewById(R.id.et_car_license_inputbox7);
         spinner = (Spinner) view.findViewById(R.id.toolbar_spinner_select_store);
+        tv_readRecords = (TextView)view.findViewById(R.id.toolbar_right_tv);
+        tv_readRecords.setClickable(true);
+        tv_readRecords.setOnClickListener(this);
         KeyboardView keyboardView = (KeyboardView) view.findViewById(R.id.keyboard_view);
              keyboardUtil = new LicenseKeyboardUtil(getContext(), new EditText[]{inputbox1, inputbox2, inputbox3,
                      inputbox4, inputbox5, inputbox6, inputbox7}, keyboardView, new getDataInterface() {
@@ -105,9 +99,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
-            case R.id.btn2:
-                break;
-            case R.id.btn3:
+            case R.id.toolbar_right_tv:
                 addFragment(NonmemberWashCarRecordsFragment.newInstance(),"nonmemrecords");
                 break;
             default:

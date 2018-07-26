@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/bg_toolbar"
-        android:paddingLeft="15dp"
+        android:paddingLeft="5dp"
         android:paddingRight="15dp">
 
         <Button
@@ -27,7 +27,7 @@
             android:id="@+id/toolbar_spinner_select_store"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="6dp"
+            android:layout_marginTop="6dp"
             android:visibility="gone"
             android:textSize="15sp" />
 
