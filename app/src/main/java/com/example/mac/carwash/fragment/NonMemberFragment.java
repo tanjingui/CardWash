@@ -112,6 +112,7 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener 
         mFragmentManager = getActivity().getSupportFragmentManager();
         transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.content,fragment,tag);
+        //将当前的事务添加到了回退栈
         transaction.addToBackStack(null);
         transaction.commit();
         transaction.hide(this);
@@ -153,57 +154,6 @@ public class NonMemberFragment extends Fragment implements View.OnClickListener 
         });
         dialog.show();
     }
-
-
-//----------------------------------------------结算对话框----------------------------------------
-//    private void customDialog2(final String carNum, int price) {
-//        String title =String.format("车牌号为 "+"<font color=#FF0000 size=20>%s</font>" +"，金额为"+"<font color=#FF0000 size=20>%s</font>元，"+ "\n请选择结算方式: ", carNum,price);
-//        final Dialog dialog = new Dialog(getActivity(), R.style.NormalDialogStyle);
-//        View view = View.inflate(getActivity(), R.layout.dialog_normal3, null);
-//        TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);
-//        TextView tv1 = (TextView) view.findViewById(R.id.btn_select1);
-//        TextView tv2 = (TextView) view.findViewById(R.id.btn_select2);
-//        TextView tv3 = (TextView) view.findViewById(R.id.btn_select3);
-//        tv1.setText("洗车卡结算"); tv2.setText("现金结算"); tv3.setText("新办会员");
-//        dialog_content.setText(Html.fromHtml(title));
-//        dialog.setContentView(view);
-//        //使得点击对话框外部不消失对话框
-//        dialog.setCanceledOnTouchOutside(false);
-//        //设置对话框的大小
-//        view.setMinimumHeight((int) (ScreenSizeUtils.getInstance(getActivity()).getScreenHeight() * 0.23f));
-//        Window dialogWindow = dialog.getWindow();
-//        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-//        lp.width = (int) (ScreenSizeUtils.getInstance(getActivity()).getScreenWidth() * 0.75f);
-//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//        lp.gravity = Gravity.CENTER;
-//        dialogWindow.setAttributes(lp);
-//        //订单的价格变动需要谨慎处理  需考虑到各种突发情况
-//        tv1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //洗车卡结算
-//                dialog.dismiss();
-//            }
-//        });
-//        tv2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //现金结算
-//                dialog.dismiss();
-//            }
-//        });
-//        tv3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //新办会员结算
-//                dialog.dismiss();
-//            }
-//        });
-//        dialog.show();
-//    }
-
-
-
 
 
 

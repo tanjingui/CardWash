@@ -159,7 +159,7 @@ public class IndexFragment extends Fragment  {
 
 
     private void customDialog1(String price) {
-        String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "元，确认开单？", price);
+        String title =String.format("订单金额"+"<font color=#FF0000 size=20>%s</font>" + "，确认开单？", price);
         final Dialog dialog = new Dialog(activity, R.style.NormalDialogStyle);
         View view = View.inflate(activity, R.layout.dialog_normal2, null);
         TextView dialog_content = (TextView) view.findViewById(R.id.dialog_content);

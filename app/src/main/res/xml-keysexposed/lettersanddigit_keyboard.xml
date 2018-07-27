@@ -39,7 +39,7 @@
             android:keyEdgeFlags="right"
             android:keyLabel="9" />
     </Row>
-    <Row android:keyWidth="9.6%p">
+    <Row android:keyWidth="12.0%p">
         <Key
             android:codes="10"
             android:keyEdgeFlags="left"

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.jsonBean.MemberWarshCarRecordsBean;
+import com.example.mac.carwash.view.RecycleViewDivider;
 import com.example.mac.carwash.webservice.PubData;
 import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
@@ -73,6 +74,8 @@ public class MemberWashCarRecordsFragment extends Fragment{
         mBottomNavigationBar.setVisibility(View.GONE);
         rv_washRecords = (RecyclerView) view.findViewById(R.id.washRecords_recycler_view);
         rv_washRecords.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_washRecords.addItemDecoration(new RecycleViewDivider(
+                view.getContext(), LinearLayoutManager.VERTICAL, 12, getResources().getColor(R.color.black)));
         btn_back = (Button)view.findViewById(R.id.toolbar_left_btn);
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override

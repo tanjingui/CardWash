@@ -37,6 +37,7 @@ import com.example.mac.carwash.view.BottomPopupOption;
 import com.example.mac.carwash.webservice.PubDataList;
 import com.example.mac.carwash.webservice.WebServiceHelp;
 import com.google.gson.Gson;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                     tv_orderPrice = (TextView)indexFragment.getView().findViewById(R.id.tv_info_order_price);
                     tv_banl = (TextView)indexFragment.getView().findViewById(R.id.tv_info_banlance);
                     tv_amt = (TextView)indexFragment.getView().findViewById(R.id.tv_info_remain);
-                    tv_name.setText(data.getOwner());tv_level.setText(data.getOTYPE());tv_carNum.setText(data.getOCARMARK());tv_orderPrice.setText(data.getOFEE()+"元");tv_banl.setText(data.getOBALANCE()+"元");tv_amt.setText(data.getDiscount()+"次");
+                    tv_name.setText(data.getOwner());tv_level.setText(data.getOTYPE());tv_carNum.setText(data.getOCARMARK());tv_orderPrice.setText(data.getOFEE()+" 元");tv_banl.setText(data.getOBALANCE()+" 元");tv_amt.setText(data.getOXICHE()+" 次");
                     break;
                 default:
                     break;
@@ -258,19 +259,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
         handler.sendMessage(msg);
     }
 
-    //记录用户首次点击返回键的时间
-    private long firstTime=0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                long secondTime=System.currentTimeMillis();
-                if(secondTime-firstTime>2000){
-                    Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
-                    firstTime=secondTime;
-                    return true;
+                Fragment fragment=mFragmentManager.findFragmentById(R.id.content);
+                Class currentFrag = fragment.getClass();
+                if(currentFrag==MemberFragment.class||currentFrag==NonMemberFragment.class||currentFrag==IndexFragment.class){
+                    return false;
                 }else{
-                    System.exit(0);
+                    removeFragment(fragment);
+                    mBottomNavigationBar.setVisibility(View.VISIBLE);
                 }
                 break;
             default:
@@ -280,7 +279,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
     }
 
 
-
+    //移除指定的Fragment
+    private void removeFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.remove(fragment);
+        transaction.commit();
+    }
 
     //在一进入主界面BaseActivity就需要去 请求门店信息
     /*-----------------------------------------传入version，请求门店信息--------------------------------------------------*/

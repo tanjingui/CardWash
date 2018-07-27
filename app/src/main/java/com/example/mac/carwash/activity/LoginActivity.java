@@ -9,20 +9,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.mac.carwash.R;
 import com.example.mac.carwash.constants.InterfaceDefinition;
 import com.example.mac.carwash.main.update.UpdateManager;
 import com.example.mac.carwash.util.PreferencesUtil;
 import com.example.mac.carwash.util.StringUtil;
+import com.example.mac.carwash.util.UninstallUtil;
 import com.example.mac.carwash.util.WeiboDialogUtils;
 import com.example.mac.carwash.webservice.JsonUtil;
 import com.example.mac.carwash.webservice.LoginUtil;
 import com.example.mac.carwash.webservice.PubData;
 import com.example.mac.carwash.webservice.WebServiceHelp;
-
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +47,10 @@ public class LoginActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_login);
+        if(UninstallUtil.checkApkExist(this,"com.android.cetcpad.ui")){
+            Toast.makeText(this,"请卸载之前的版本，避免影响使用",Toast.LENGTH_SHORT).show();
+            UninstallUtil.deletePrevious(this,"com.android.cetcpad.ui");
+        }
         mWeiboDialog = WeiboDialogUtils.createLoadingDialog(LoginActivity.this, "加载中...");//检查更新后  再结束LoadingDialog
         checkForUpdateRequest();//检查更新
         initView();
@@ -133,5 +135,6 @@ public class LoginActivity extends AppCompatActivity{
         });
         mServiceHelp.start(resMap,LoginActivity.this);
     }
+
 }
 

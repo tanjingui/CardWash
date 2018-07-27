@@ -27,5 +27,12 @@
         <activity android:name=".activity.CaptureActivity"></activity>
         <activity android:name=".util.permissionutil.HelpActivity"></activity>
     </application>
+    <receiver android:name=".MyInstalledReceiver" >
+        <intent-filter>
+            <action android:name="android.intent.action.PACKAGE_ADDED" />
+            <action android:name="android.intent.action.PACKAGE_REMOVED" />
 
+            <data android:scheme="package" />
+        </intent-filter>
+    </receiver>
 </manifest>
